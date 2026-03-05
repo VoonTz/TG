@@ -36,8 +36,8 @@ EditorBuildSettings:
     path: Assets/Scenes/Level 1/Sala 5.unity
     guid: a90c5d43f0d89904f86c269e476fbf13
   - enabled: 1
-    path: Assets/Scenes/Sala 11.unity
-    guid: 8b000334c3332544889147140742be48
+    path: Assets/Scenes/Level 1/Sala 11.unity
+    guid: a49fd3a670949f742a686726d06c5daf
   - enabled: 1
     path: Assets/Scenes/Level 1/Sala 9.unity
     guid: 63a1c7a6e2e8397498a7f4d4ccf14459
@@ -50,6 +50,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Level 1/Sala 13.unity
     guid: 5d91d90f1dd36d243a50771bd200cedf
+  - enabled: 1
+    path: Assets/Scenes/Level 1/Sala Boss.unity
+    guid: 602b1d89a7f083c4e99e4ecd2ecb3a89
   - enabled: 1
     path: Assets/Scenes/Level 1/Sala 12.unity
     guid: d2ed389d21703a94b81a305417247b3a
