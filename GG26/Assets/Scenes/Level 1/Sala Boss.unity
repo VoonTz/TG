@@ -1426,12 +1426,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d76d38290bdec9b4bbe9d56d6ad6cce7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Boss
-  maxHealth: 100
-  fireRate: 0.4
+  maxHealth: 10
   firePoint: {fileID: 2118511630}
   projectilePrefab: {fileID: 5858800512339482198, guid: 5d600cdc95f47bb419f3167efc8d73f4, type: 3}
-  projectileSpeed: 8
+  projectileSpeed: 5
   projectileDamage: 2
+  normalFireRate: 0.4
+  shotgunCooldown: 4
+  shotgunBullets: 8
+  shotgunSpread: 60
+  spikePrefab: {fileID: 579896274406672410, guid: 18736039d654ad1408bbc6f8af9528b2, type: 3}
+  spikeDelay: 0.5
+  spikeCount: 3
 --- !u!1 &957251424
 GameObject:
   m_ObjectHideFlags: 0
