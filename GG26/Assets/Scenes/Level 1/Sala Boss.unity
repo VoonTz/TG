@@ -1345,9 +1345,17 @@ PrefabInstance:
       value: BossAttack
       objectReference: {fileID: 0}
     - target: {fileID: 6527615796578905945, guid: 5d600cdc95f47bb419f3167efc8d73f4, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 7364878218832371413, guid: d5fb89a1d3b907744b39f23cd22eb1b6, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6527615796578905945, guid: 5d600cdc95f47bb419f3167efc8d73f4, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6527615796578905945, guid: 5d600cdc95f47bb419f3167efc8d73f4, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4161,12 +4169,24 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 494528269237725674, guid: 8cffa2b0adcfc8f4aa5b2fb97566fb48, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 4.2406907
+      objectReference: {fileID: 0}
+    - target: {fileID: 494528269237725674, guid: 8cffa2b0adcfc8f4aa5b2fb97566fb48, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 4.2523603
+      objectReference: {fileID: 0}
+    - target: {fileID: 494528269237725674, guid: 8cffa2b0adcfc8f4aa5b2fb97566fb48, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 3.153868
+      objectReference: {fileID: 0}
+    - target: {fileID: 494528269237725674, guid: 8cffa2b0adcfc8f4aa5b2fb97566fb48, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.08
       objectReference: {fileID: 0}
     - target: {fileID: 494528269237725674, guid: 8cffa2b0adcfc8f4aa5b2fb97566fb48, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.03
+      value: 3.0733
       objectReference: {fileID: 0}
     - target: {fileID: 494528269237725674, guid: 8cffa2b0adcfc8f4aa5b2fb97566fb48, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4199,6 +4219,14 @@ PrefabInstance:
     - target: {fileID: 494528269237725674, guid: 8cffa2b0adcfc8f4aa5b2fb97566fb48, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 834318371050846592, guid: 8cffa2b0adcfc8f4aa5b2fb97566fb48, type: 3}
+      propertyPath: m_SpriteTilingProperty.newSize.x
+      value: 1.8333334
+      objectReference: {fileID: 0}
+    - target: {fileID: 834318371050846592, guid: 8cffa2b0adcfc8f4aa5b2fb97566fb48, type: 3}
+      propertyPath: m_SpriteTilingProperty.newSize.y
+      value: 2.0333333
       objectReference: {fileID: 0}
     - target: {fileID: 7007694624162684663, guid: 8cffa2b0adcfc8f4aa5b2fb97566fb48, type: 3}
       propertyPath: m_Size.x
