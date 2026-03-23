@@ -29,10 +29,15 @@ public class Boss : MonoBehaviour
     private float nextNormalShot;
     private float nextShotgunShot;
 
+    Animator Tree;
+
+    private bool isDead = false;
+
     private bool isSpiking = false;
 
     private void Start()
     {
+        Tree = GetComponent<Animator>();
 
         currentHealth = maxHealth;
 
@@ -43,6 +48,7 @@ public class Boss : MonoBehaviour
 
     private void Update()
     {
+        if (isDead) return;
         if (player == null) return;
 
         float hpPercent = (float)currentHealth / maxHealth;
@@ -146,20 +152,25 @@ public class Boss : MonoBehaviour
     // ===== VIDA =====
     public void TakeDamage(int damage)
     {
+        
         if (!CompareTag("Enemy")) return;
 
         currentHealth -= damage;
 
         if (currentHealth <= 0)
         {
+            
             Die();
         }
     }
 
     private void Die()
     {
+        if (isDead) return;
+        isDead = true;
+        Tree.SetTrigger("IsDead");
         Player.RegisterEnemyKill();
-        Destroy(gameObject);
+        Destroy(gameObject, 1.5f);
     }
 }
 
