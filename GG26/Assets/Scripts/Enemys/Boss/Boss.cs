@@ -33,6 +33,7 @@ public class Boss : MonoBehaviour
 
     private void Start()
     {
+
         currentHealth = maxHealth;
 
         GameObject p = GameObject.FindGameObjectWithTag("Player");
