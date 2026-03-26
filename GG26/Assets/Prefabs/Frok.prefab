@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7619940364593238791}
   - component: {fileID: 1934602432047049803}
   - component: {fileID: 7301190139939331001}
+  - component: {fileID: 2874199283806764587}
   m_Layer: 0
   m_Name: Frok
   m_TagString: Enemy
@@ -37,6 +38,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &4678523499708711089
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -55,6 +57,8 @@ SpriteRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -76,9 +80,11 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: 8a9b33f11fedafd4694f5b76849d6894, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -88,7 +94,6 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!50 &7619940364593238791
 Rigidbody2D:
@@ -185,3 +190,38 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &2874199283806764587
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7600823593906492549}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9dfa1bd2ba44b843a07e06cb1de9f3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Frok
+  maxHealth: 15
+  chaseSpeed: 1.5
+  aggroRange: 5
+  wanderSpeed: 1
+  wanderChangeTime: 1
+  wanderIdleChance: 0.2
+  attackRange: 0.7
+  attackDamageRange: 1
+  attackWindupTime: 0.3
+  postAttackIdleTime: 1
+  attackDamage: 4
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 0
+  castSkin: 0.02
+  changeDirOnHit: 1
+  anim: {fileID: 0}
+  paramIsMoving: isMoving
+  paramDoAttack: doAttack
+  paramIsDead: isDead
+  deathAnimTime: 0.5
+  guiOffset: {x: 0, y: 0.8}
+  debugInfo: 1
