@@ -10,6 +10,10 @@ public class Boss : MonoBehaviour
     [SerializeField] private float projectileSpeed = 8f;
     [SerializeField] private int projectileDamage = 1;
 
+    [Header("Ranges")]
+    [SerializeField] private float aggroRange = 10f;
+    [SerializeField] private float attackRange = 6f;
+
     [Header("Fire Rate")]
     [SerializeField] private float normalFireRate = 1.5f;
     [SerializeField] private float shotgunCooldown = 4f;
@@ -35,6 +39,8 @@ public class Boss : MonoBehaviour
 
     private bool isSpiking = false;
 
+    private bool hasAggro = false;
+
     private void Start()
     {
         Tree = GetComponent<Animator>();
@@ -51,6 +57,17 @@ public class Boss : MonoBehaviour
         if (isDead) return;
         if (player == null) return;
 
+        float distance = Vector2.Distance(transform.position, player.position);
+
+        // Ativa aggro uma vez
+        if (!hasAggro && distance <= aggroRange)
+        {
+            hasAggro = true;
+        }
+
+        // Se nunca entrou no aggro, não faz nada
+        if (!hasAggro) return;
+
         float hpPercent = (float)currentHealth / maxHealth;
 
         // ===== FASE 1 =====
@@ -58,14 +75,12 @@ public class Boss : MonoBehaviour
         {
             NormalShoot();
         }
-
         // ===== FASE 2 =====
         else if (hpPercent > 0.25f)
         {
             NormalShoot();
             ShotgunAttack();
         }
-
         // ===== FASE 3 =====
         else
         {
@@ -155,6 +170,8 @@ public class Boss : MonoBehaviour
         
         if (!CompareTag("Enemy")) return;
 
+        hasAggro = true;
+
         currentHealth -= damage;
 
         if (currentHealth <= 0)
@@ -171,6 +188,15 @@ public class Boss : MonoBehaviour
         Tree.SetTrigger("IsDead");
         Player.RegisterEnemyKill();
         Destroy(gameObject, 1.5f);
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, aggroRange);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, attackRange);
     }
 }
 
