@@ -6,70 +6,70 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
+    path: Assets/Scenes/Test LAB.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   - enabled: 1
-    path: Assets/Scenes/Level 1/GameBegin.unity
+    path: Assets/Scenes/Rascunho level 1/GameBegin.unity
     guid: 3171359f2e4a211428dce9f35b86a3bd
   - enabled: 1
-    path: Assets/Scenes/Level 1/Sala 1.unity
+    path: Assets/Scenes/Rascunho level 1/Sala 1.unity
     guid: cc47ef3a3f02eec47ba9edc65bf2ac4a
   - enabled: 1
-    path: Assets/Scenes/Level 1/Sala 3.unity
+    path: Assets/Scenes/Rascunho level 1/Sala 3.unity
     guid: 11b662ca559dc884e971cc4673f4b8ef
   - enabled: 1
-    path: Assets/Scenes/Level 1/Sala 4.unity
+    path: Assets/Scenes/Rascunho level 1/Sala 4.unity
     guid: 187038e1c929428408bc8b4945053193
   - enabled: 1
-    path: Assets/Scenes/Level 1/Sala 2.unity
+    path: Assets/Scenes/Rascunho level 1/Sala 2.unity
     guid: 3a7d8a62eacaa5342b35753d0d1d31bd
   - enabled: 1
-    path: Assets/Scenes/Level 1/Sala 8.unity
+    path: Assets/Scenes/Rascunho level 1/Sala 8.unity
     guid: b95639745d530194188735927ca25778
   - enabled: 1
-    path: Assets/Scenes/Level 1/Sala 7.unity
+    path: Assets/Scenes/Rascunho level 1/Sala 7.unity
     guid: 4ea15c056469cdb42a63f529a7243522
   - enabled: 1
-    path: Assets/Scenes/Level 1/Sala 6.unity
+    path: Assets/Scenes/Rascunho level 1/Sala 6.unity
     guid: 9bbf0d236cc6ab14dac0438d81539f65
   - enabled: 1
-    path: Assets/Scenes/Level 1/Sala 5.unity
+    path: Assets/Scenes/Rascunho level 1/Sala 5.unity
     guid: a90c5d43f0d89904f86c269e476fbf13
   - enabled: 1
-    path: Assets/Scenes/Level 1/Sala 11.unity
+    path: Assets/Scenes/Rascunho level 1/Sala 11.unity
     guid: a49fd3a670949f742a686726d06c5daf
   - enabled: 1
-    path: Assets/Scenes/Level 1/Sala 9.unity
+    path: Assets/Scenes/Rascunho level 1/Sala 9.unity
     guid: 63a1c7a6e2e8397498a7f4d4ccf14459
   - enabled: 1
-    path: Assets/Scenes/Level 1/Sala 10.unity
+    path: Assets/Scenes/Rascunho level 1/Sala 10.unity
     guid: 5b3a3f04897df2348967398fdfc20eda
   - enabled: 1
-    path: Assets/Scenes/Level 1/Sala 14.unity
+    path: Assets/Scenes/Rascunho level 1/Sala 14.unity
     guid: 354f3a65ecf00c5448113c5acd083432
   - enabled: 1
-    path: Assets/Scenes/Level 1/Sala 13.unity
+    path: Assets/Scenes/Rascunho level 1/Sala 13.unity
     guid: 5d91d90f1dd36d243a50771bd200cedf
   - enabled: 1
-    path: Assets/Scenes/Level 1/Sala Boss.unity
+    path: Assets/Scenes/Rascunho level 1/Sala Boss.unity
     guid: 602b1d89a7f083c4e99e4ecd2ecb3a89
   - enabled: 1
-    path: Assets/Scenes/Level 1/Sala 12.unity
+    path: Assets/Scenes/Rascunho level 1/Sala 12.unity
     guid: d2ed389d21703a94b81a305417247b3a
   - enabled: 1
-    path: Assets/Scenes/Level 1/Sala 15.unity
+    path: Assets/Scenes/Rascunho level 1/Sala 15.unity
     guid: 8acd884f1ae22904cbb075e626cb495a
   - enabled: 1
-    path: Assets/Scenes/Level 1/Sala 16.unity
+    path: Assets/Scenes/Rascunho level 1/Sala 16.unity
     guid: de349fefd56fe8349b3db16ef29678a3
   - enabled: 1
-    path: Assets/Scenes/Level 1/Sala 17.unity
+    path: Assets/Scenes/Rascunho level 1/Sala 17.unity
     guid: 9b651be2aae2c7e41927e1337821ee71
   - enabled: 1
-    path: Assets/Scenes/Level 1/Sala 18.unity
+    path: Assets/Scenes/Rascunho level 1/Sala 18.unity
     guid: 6174e17e4500bfc40a0e351e1bd2e797
   - enabled: 1
-    path: Assets/Scenes/Level 1/Sala 19.unity
+    path: Assets/Scenes/Rascunho level 1/Sala 19.unity
     guid: 987efa46837ed4d4ab6fd107ebc97284
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}

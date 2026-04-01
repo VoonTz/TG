@@ -132,6 +132,24 @@ public class Frok : MonoBehaviour
         }
     }
 
+    public void ResetEnemyState()
+    {
+        aggroed = false;
+        isAttacking = false;
+        postAttackTimer = 0f;
+        attackTimer = 0f;
+        isDead = false;
+
+        rb.linearVelocity = Vector2.zero;
+        rb.simulated = true;
+
+        state = State.WANDER;
+        PickNewWanderDirection();
+
+        SetDead(false);
+        SetMoving(false);
+    }
+
     private void FixedUpdate()
     {
         if (isDead) return;
