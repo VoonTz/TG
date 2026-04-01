@@ -44,7 +44,8 @@ public class EnemyCullingReset : MonoBehaviour
 
     private void ResetEnemy()
     {
-        transform.position = startPosition;
+        // RESETA A POSIÇÃO DO INIMIGO
+        // transform.position = startPosition;
 
         var frok = GetComponent<Frok>();
         if (frok != null)

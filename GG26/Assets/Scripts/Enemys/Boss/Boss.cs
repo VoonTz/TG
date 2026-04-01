@@ -198,9 +198,10 @@ public class Boss : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);
     }
+
+    
+
 }
-
-
 // ===== PROJÉTIL =====
 public class BossProjectile : MonoBehaviour
 {
@@ -220,6 +221,10 @@ public class BossProjectile : MonoBehaviour
             if (player != null)
                 player.TakeDamage(damage);
 
+            Destroy(gameObject);
+        }
+        if (collision.CompareTag("Wall"))
+        {
             Destroy(gameObject);
         }
     }

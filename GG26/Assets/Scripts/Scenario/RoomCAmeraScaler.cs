@@ -32,7 +32,8 @@ public class RoomCameraScaler : MonoBehaviour
 
         if (screenRatio >= targetRatio)
         {
-            newSize = bounds.size.y / 2;
+            
+            newSize = bounds.size.y / 2.5f;
         }
         else
         {
