@@ -159,7 +159,7 @@ public class Boss : MonoBehaviour
             yield return new WaitForSeconds(spikeDelay);
         }
 
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(3f);
 
         isSpiking = false;
     }
@@ -243,7 +243,7 @@ public class Spike : MonoBehaviour
 
         if (timer <= 0f)
         {
-            Collider2D hit = Physics2D.OverlapCircle(transform.position, 0.6f);
+            Collider2D hit = Physics2D.OverlapCircle(transform.position, 1f);
 
             if (hit != null && hit.CompareTag("Player"))
             {
