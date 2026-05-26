@@ -221,7 +221,7 @@ public class Player : MonoBehaviour
             GameManager.Instance.maxHealth,
             GameManager.Instance.currentHealth + healAmount
         );
-
+        GameManager.Instance.UpdateUI();
         if (GameManager.Instance.currentHealth > before)
             GameManager.Instance.healCharges = 0;
     }
@@ -238,6 +238,7 @@ public class Player : MonoBehaviour
 
         GameManager.Instance.currentHealth -= amount;
         GameManager.Instance.currentHealth = Mathf.Max(0, GameManager.Instance.currentHealth);
+        GameManager.Instance.UpdateUI();
 
         // toca animação de dano e dá 1s invuln
         if (anim != null)
@@ -294,6 +295,7 @@ public class Player : MonoBehaviour
         }
     }
 
+    /*
     private void OnGUI()
     {
         GUI.Label(new Rect(10, 10, 260, 20), "Velocidade: " + rb.linearVelocity.magnitude.ToString("F2"));
@@ -314,6 +316,7 @@ public class Player : MonoBehaviour
 
         GUI.Label(new Rect(10, 90, 320, 20), healText);
         if (!string.IsNullOrEmpty(invText))
-            GUI.Label(new Rect(10, 110, 260, 20), invText);
+            GUI.Label(new Rect(10, 110, 260, 20), invText); 
     }
+    */
 }
