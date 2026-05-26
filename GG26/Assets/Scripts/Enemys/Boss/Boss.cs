@@ -176,7 +176,6 @@ public class Boss : MonoBehaviour
 
         if (currentHealth <= 0)
         {
-            
             Die();
         }
     }
@@ -187,7 +186,7 @@ public class Boss : MonoBehaviour
         isDead = true;
         Tree.SetTrigger("IsDead");
         Player.RegisterEnemyKill();
-        Destroy(gameObject, 1.5f);
+        //Destroy(gameObject, 1.5f);
     }
 
     private void OnDrawGizmosSelected()
