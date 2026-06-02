@@ -18445,14 +18445,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 418113644}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.66227, y: 11.50553, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 10.2738495, y: -58.627792, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 588657722}
   - {fileID: 2086916880}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1029182902}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &421034666 stripped
 Transform:
@@ -18666,21 +18666,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentHealth: 12
   maxHealth: 12
-  healthImage: {fileID: 1164209283}
-  healthSprites:
-  - {fileID: -991559566962332416, guid: 50c4d4105d732f645841e7c9e9fe897e, type: 3}
-  - {fileID: -6058919535027470967, guid: 63aa3b0713b1bf34d95b3f84ce843f94, type: 3}
-  - {fileID: -7151999003869102476, guid: 0262ded600fd534439f3ad134c0b5054, type: 3}
-  - {fileID: 5487366878539831244, guid: 65bfa5045a5db294b89e12a584f74ae3, type: 3}
-  - {fileID: 1164367701319321791, guid: 037fce524d46e00438a0d1c455565ab4, type: 3}
-  - {fileID: -3933169860287639785, guid: 741d385ac2281004bb77a7de044812b0, type: 3}
-  - {fileID: 1508943246667511144, guid: 4fe65c82103ef70408df217fdf560cb3, type: 3}
-  - {fileID: 2843857297760293204, guid: fd0230cddc4c5ea42923b3b6c38ccea1, type: 3}
-  - {fileID: 2085944188553294826, guid: bd9c1017dedd1ac4baa254e7756c9e8a, type: 3}
-  - {fileID: 4754456045824386576, guid: 806ec8fd5841af34aa7f39624c811347, type: 3}
-  - {fileID: 3755353193119379191, guid: f3978888ef122a04783370cdd489bb11, type: 3}
-  - {fileID: 3755353193119379191, guid: f3978888ef122a04783370cdd489bb11, type: 3}
-  - {fileID: -9088324690132889312, guid: d98a59bdad463874dab4b50f9b2a2410, type: 3}
+  healthImage: {fileID: 0}
+  healthSprites: []
   healCharges: 1
   killsSinceRestore: 0
 --- !u!4 &448511427
@@ -19166,7 +19153,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 0.634
+  m_Volume: 0.2
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -20429,6 +20416,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 519420032}
+  - {fileID: 418113646}
   - {fileID: 448511427}
   - {fileID: 619394802}
   - {fileID: 973222510}
@@ -21573,6 +21561,58 @@ MonoBehaviour:
         m_Calls: []
   m_LegacyBlendHint: 0
   m_ComponentOwner: {fileID: 1997606762}
+--- !u!1 &1290948633
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1290948635}
+  - component: {fileID: 1290948634}
+  m_Layer: 0
+  m_Name: Enemy Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1290948634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1290948633}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b71097e0a3253184ba9438bd02868605, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnerParallel
+  tilemap: {fileID: 2079595108}
+  player: {fileID: 421034666}
+  enemyPrefab: {fileID: 1938709003}
+  enemiesPerWave: 5
+  spawnHeight: -1
+  minDistanceFromPlayer: 8
+  timeBetweenWaves: 30
+  startSpawningAutomatically: 1
+--- !u!4 &1290948635
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1290948633}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -3.17303, y: 58.12103, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1295511994
 GameObject:
   m_ObjectHideFlags: 0
@@ -101869,4 +101909,4 @@ SceneRoots:
   - {fileID: 646348283}
   - {fileID: 1661194583}
   - {fileID: 93107251}
-  - {fileID: 418113646}
+  - {fileID: 1290948635}
