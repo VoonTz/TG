@@ -88,7 +88,10 @@ public class Player : MonoBehaviour
 
         isDead = (GameManager.Instance.currentHealth <= 0);
         if (anim != null)
+        {
             anim.SetBool("Dead", isDead);
+        }
+            
     }
 
     private void Update()
@@ -250,7 +253,13 @@ public class Player : MonoBehaviour
         if (GameManager.Instance.currentHealth <= 0)
         {
             Die();
+            Invoke(nameof(ShowGameOver), 1.5f);
         }
+    }
+
+    private void ShowGameOver()
+    {
+        GameManager.Instance.TriggerGameOver();
     }
 
     private void Die()
@@ -262,6 +271,8 @@ public class Player : MonoBehaviour
 
         if (anim != null)
             anim.SetBool("Dead", true);
+
+        
     }
 
     // colisão com inimigo = 1 de dano (sem trigger)

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -16,9 +17,20 @@ public class GameManager : MonoBehaviour
     public int healCharges = 1;        // 0 ou 1
     public int killsSinceRestore = 0;  // progresso da recarga
 
+    //-------------
+    [Header("Game Over Screen")]
+    [SerializeField] private GameObject gameOverScreen;
+    [SerializeField] private GameObject playerHud;
+
     void Start()
     {
+        
         UpdateUI();
+
+        if(gameOverScreen != null)
+        {
+            gameOverScreen.SetActive(false);
+        }
     }
     private void Awake()
     {
@@ -36,4 +48,29 @@ public class GameManager : MonoBehaviour
     {
         healthImage.sprite = healthSprites[currentHealth];
     }
+
+    public void ReduceLives()
+    {
+        if (currentHealth <= 0)
+        {
+            TriggerGameOver();
+        }
+    }
+
+
+    public void TriggerGameOver()
+    {
+        playerHud.SetActive(false);
+
+        gameOverScreen.SetActive(true);
+        Time.timeScale = 0f;
+    }
+
+    public void RestartGame()
+    {
+        Time.timeScale = 1f;
+
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
 }
