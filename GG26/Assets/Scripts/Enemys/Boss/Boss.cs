@@ -186,6 +186,7 @@ public class Boss : MonoBehaviour
         isDead = true;
         Tree.SetTrigger("IsDead");
         Player.RegisterEnemyKill();
+        gameObject.tag = "Untagged";
         //Destroy(gameObject, 1.5f);
     }
 
