@@ -18605,6 +18605,11 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 5104380019471276765, guid: 80c7ac59a9a71b3498656f9edb9291ba, type: 3}
   m_PrefabInstance: {fileID: 1347284372}
   m_PrefabAsset: {fileID: 0}
+--- !u!95 &450587463 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5286298436202996791, guid: 80c7ac59a9a71b3498656f9edb9291ba, type: 3}
+  m_PrefabInstance: {fileID: 1347284372}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &450587468
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18617,6 +18622,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee32ccb795f686044a8992a333e74431, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tuga
+  maxHealth: 10
+  chaseSpeed: 1.5
+  aggroRange: 8
+  dashRange: 4
+  dashSpeed: 9
+  dashDuration: 0.5
+  dashCooldown: 2
+  dashPrepareTime: 0.5
+  dashDamage: 4
+  damageRange: 0.8
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 0
+  castSkin: 0.02
+  anim: {fileID: 450587463}
+  paramIsMoving: isMoving
+  paramDoDash: doDash
+  paramIsDead: isDead
 --- !u!1 &503539963
 GameObject:
   m_ObjectHideFlags: 0
@@ -22153,11 +22176,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7060522922781771291, guid: c5b8bc07f9c7c1843933a892876c8996, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.55
+      value: 3.26
       objectReference: {fileID: 0}
     - target: {fileID: 7060522922781771291, guid: c5b8bc07f9c7c1843933a892876c8996, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -11.05
+      value: -23.68
       objectReference: {fileID: 0}
     - target: {fileID: 7060522922781771291, guid: c5b8bc07f9c7c1843933a892876c8996, type: 3}
       propertyPath: m_LocalPosition.z
@@ -101688,7 +101711,7 @@ SceneRoots:
   - {fileID: 1756417600}
   - {fileID: 2009009597}
   - {fileID: 971227292}
+  - {fileID: 1347284372}
   - {fileID: 1661194583}
   - {fileID: 93107251}
   - {fileID: 418113646}
-  - {fileID: 1347284372}
