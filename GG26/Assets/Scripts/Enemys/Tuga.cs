@@ -41,6 +41,23 @@ public class DashEnemy : MonoBehaviour
     [SerializeField] private string paramDoDash = "doDash";
     [SerializeField] private string paramIsDead = "isDead";
 
+    // =========================================================
+    // AUDIO
+    // =========================================================
+
+    [Header("Audio")]
+    [SerializeField] private AudioSource movementAudioSource;
+    [SerializeField] private AudioSource sfxAudioSource;
+
+    [SerializeField] private AudioClip movementSFX;
+    [SerializeField] private AudioClip prepareDashSFX;
+    [SerializeField] private AudioClip dashSFX;
+    [SerializeField] private AudioClip hitSFX;
+    [SerializeField] private AudioClip deathSFX;
+
+    [SerializeField][Range(0f, 1f)] private float movementVolume = 1f;
+    [SerializeField][Range(0f, 1f)] private float sfxVolume = 1f;
+
     private int currentHealth;
 
     private Rigidbody2D rb;
@@ -73,6 +90,9 @@ public class DashEnemy : MonoBehaviour
         castFilter.useTriggers = false;
         castFilter.SetLayerMask(obstacleMask);
 
+        // Configura os AudioSources automaticamente
+        SetupAudioSources();
+
         SetMoving(false);
         SetDead(false);
     }
@@ -90,6 +110,7 @@ public class DashEnemy : MonoBehaviour
         if (isDead)
         {
             state = State.DEAD;
+            StopMovementSFX();
             return;
         }
 
@@ -122,7 +143,6 @@ public class DashEnemy : MonoBehaviour
         {
             prepareTimer -= Time.deltaTime;
 
-            // Para completamente enquanto prepara
             rb.linearVelocity = Vector2.zero;
 
             SetMoving(false);
@@ -239,6 +259,83 @@ public class DashEnemy : MonoBehaviour
     }
 
     // =========================================================
+    // AUDIO
+    // =========================================================
+
+    private void SetupAudioSources()
+    {
+        // Se não colocou os AudioSources pelo Inspector,
+        // o script cria automaticamente.
+
+        if (movementAudioSource == null)
+        {
+            GameObject movementObject = new GameObject("Movement Audio");
+            movementObject.transform.SetParent(transform);
+            movementObject.transform.localPosition = Vector3.zero;
+
+            movementAudioSource =
+                movementObject.AddComponent<AudioSource>();
+        }
+
+        if (sfxAudioSource == null)
+        {
+            GameObject sfxObject = new GameObject("SFX Audio");
+            sfxObject.transform.SetParent(transform);
+            sfxObject.transform.localPosition = Vector3.zero;
+
+            sfxAudioSource =
+                sfxObject.AddComponent<AudioSource>();
+        }
+
+        // Configuração do som de movimento
+        movementAudioSource.loop = true;
+        movementAudioSource.playOnAwake = false;
+        movementAudioSource.volume = movementVolume;
+
+        // Configuração dos SFX
+        sfxAudioSource.loop = false;
+        sfxAudioSource.playOnAwake = false;
+        sfxAudioSource.volume = sfxVolume;
+    }
+
+    private void PlaySFX(AudioClip clip)
+    {
+        if (clip == null)
+            return;
+
+        if (sfxAudioSource == null)
+            return;
+
+        sfxAudioSource.PlayOneShot(clip, sfxVolume);
+    }
+
+    private void StartMovementSFX()
+    {
+        if (movementAudioSource == null)
+            return;
+
+        if (movementSFX == null)
+            return;
+
+        if (!movementAudioSource.isPlaying)
+        {
+            movementAudioSource.clip = movementSFX;
+            movementAudioSource.volume = movementVolume;
+            movementAudioSource.loop = true;
+            movementAudioSource.Play();
+        }
+    }
+
+    private void StopMovementSFX()
+    {
+        if (movementAudioSource == null)
+            return;
+
+        if (movementAudioSource.isPlaying)
+            movementAudioSource.Stop();
+    }
+
+    // =========================================================
     // PREPARA O DASH
     // =========================================================
 
@@ -254,6 +351,9 @@ public class DashEnemy : MonoBehaviour
         rb.linearVelocity = Vector2.zero;
 
         SetMoving(false);
+
+        // SFX de preparação
+        PlaySFX(prepareDashSFX);
     }
 
     // =========================================================
@@ -279,6 +379,9 @@ public class DashEnemy : MonoBehaviour
 
         if (anim != null)
             anim.SetTrigger(paramDoDash);
+
+        // SFX do dash
+        PlaySFX(dashSFX);
     }
 
     // =========================================================
@@ -349,6 +452,9 @@ public class DashEnemy : MonoBehaviour
             {
                 p.TakeDamage(dashDamage);
 
+                // SFX ao acertar o player
+                PlaySFX(hitSFX);
+
                 // Garante que o dano acontece
                 // apenas uma vez por dash.
 
@@ -364,7 +470,10 @@ public class DashEnemy : MonoBehaviour
     private bool TryMove(Vector2 direction, float speed)
     {
         if (direction.sqrMagnitude < 0.0001f)
+        {
+            StopMovementSFX();
             return false;
+        }
 
         Vector2 delta =
             direction.normalized *
@@ -408,15 +517,20 @@ public class DashEnemy : MonoBehaviour
                     rb.position + safeDelta
                 );
 
+                StartMovementSFX();
+
                 return true;
             }
 
+            StopMovementSFX();
             return false;
         }
 
         rb.MovePosition(
             rb.position + delta
         );
+
+        StartMovementSFX();
 
         return true;
     }
@@ -459,6 +573,12 @@ public class DashEnemy : MonoBehaviour
         SetMoving(false);
         SetDead(true);
 
+        // Para o som de movimento
+        StopMovementSFX();
+
+        // Toca o som de morte
+        PlaySFX(deathSFX);
+
         Destroy(gameObject, 0.5f);
     }
 
@@ -475,6 +595,12 @@ public class DashEnemy : MonoBehaviour
             paramIsMoving,
             moving
         );
+
+        // Também controla o SFX de movimento
+        if (moving)
+            StartMovementSFX();
+        else
+            StopMovementSFX();
     }
 
     private void SetDead(bool dead)

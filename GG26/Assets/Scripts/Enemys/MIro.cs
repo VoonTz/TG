@@ -26,6 +26,10 @@ public class Miro : MonoBehaviour
 
     [Header("Ranged Attack")]
     [SerializeField] private float shootingRange = 4f;
+
+    // Distância mínima que o inimigo tenta manter do player
+    [SerializeField] private float minimumDistance = 2.5f;
+
     [SerializeField] private float shootWindupTime = 0.3f;
     [SerializeField] private float shootCooldown = 1.5f;
 
@@ -169,7 +173,7 @@ public class Miro : MonoBehaviour
 
 
         // ========================================================
-        // WANDER / CHASE
+        // WANDER / COMBATE
         // ========================================================
 
         if (!aggroed)
@@ -192,6 +196,7 @@ public class Miro : MonoBehaviour
                     player.position
                 );
 
+            // Dentro do alcance de tiro
             if (dist <= shootingRange &&
                 cooldownTimer <= 0f)
             {
@@ -273,20 +278,61 @@ public class Miro : MonoBehaviour
 
 
         // ========================================================
-        // PERSEGUE O PLAYER
+        // DIREÇÃO DO PLAYER
         // ========================================================
 
-        Vector2 dir =
+        Vector2 dirToPlayer =
             ((Vector2)player.position - rb.position)
             .normalized;
 
-        bool movedChase =
-            TryMove(
-                dir,
-                chaseSpeed
-            );
 
-        SetMoving(movedChase);
+        // ========================================================
+        // PLAYER ESTÁ PERTO DEMAIS
+        // ========================================================
+
+        if (dist < minimumDistance)
+        {
+            // Direção oposta ao player
+            Vector2 retreatDirection =
+                -dirToPlayer;
+
+            bool moved =
+                TryMove(
+                    retreatDirection,
+                    chaseSpeed
+                );
+
+            SetMoving(moved);
+
+            return;
+        }
+
+
+        // ========================================================
+        // PLAYER ESTÁ LONGE DEMAIS
+        // ========================================================
+
+        if (dist > shootingRange)
+        {
+            bool moved =
+                TryMove(
+                    dirToPlayer,
+                    chaseSpeed
+                );
+
+            SetMoving(moved);
+
+            return;
+        }
+
+
+        // ========================================================
+        // ESTÁ NA DISTÂNCIA IDEAL
+        // ========================================================
+
+        rb.linearVelocity = Vector2.zero;
+
+        SetMoving(false);
     }
 
 
@@ -770,6 +816,15 @@ public class Miro : MonoBehaviour
         Gizmos.DrawWireSphere(
             transform.position,
             shootingRange
+        );
+
+
+        // Distância mínima
+        Gizmos.color = Color.blue;
+
+        Gizmos.DrawWireSphere(
+            transform.position,
+            minimumDistance
         );
     }
 }

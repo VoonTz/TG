@@ -7,7 +7,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: miro walk
+  m_Name: Miro_walk
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -33,7 +33,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: miro idle
+  m_Name: Miro_Idle
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -63,16 +63,16 @@ AnimatorStateMachine:
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: -7840951670724421728}
-    m_Position: {x: 200, y: 0, z: 0}
+    m_Position: {x: 30, y: 210, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -8692303680046125253}
-    m_Position: {x: 235, y: 65, z: 0}
+    m_Position: {x: 280, y: 210, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 4966519935875167576}
-    m_Position: {x: 270, y: 130, z: 0}
+    m_Position: {x: 440, y: -40, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 6783017647302059695}
-    m_Position: {x: 305, y: 195, z: 0}
+    m_Position: {x: 380, y: 370, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []
