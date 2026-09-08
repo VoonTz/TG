@@ -71,8 +71,8 @@ MonoBehaviour:
     y: 0
     width: 410
     height: 981
-  m_MinSize: {x: 275, y: 50}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 276, y: 76}
+  m_MaxSize: {x: 4001, y: 4026}
   m_ActualView: {fileID: 17}
   m_Panes:
   - {fileID: 17}
@@ -303,8 +303,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "Animator\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 215
-    y: 79
+    x: 216
+    y: 24
     width: 1293
     height: 596
   m_SerializedDataModeController:
@@ -618,7 +618,7 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 43
+    y: 0
     width: 1920
     height: 36
   m_SerializedDataModeController:
@@ -898,7 +898,7 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 701
+    y: 646
     width: 1509
     height: 333
   m_SerializedDataModeController:
@@ -949,15 +949,11 @@ MonoBehaviour:
       m_Data: 51886
     m_ExpandedIDs:
     - m_Data: 0
-    - m_Data: 51502
-    - m_Data: 51504
-    - m_Data: 51506
-    - m_Data: 51508
-    - m_Data: 51510
-    - m_Data: 51840
-    - m_Data: 51844
-    - m_Data: 51850
-    - m_Data: 51856
+    - m_Data: 51516
+    - m_Data: 51518
+    - m_Data: 51520
+    - m_Data: 51522
+    - m_Data: 51524
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -990,11 +986,11 @@ MonoBehaviour:
       m_Data: 0
     m_ExpandedIDs:
     - m_Data: 0
-    - m_Data: 51502
-    - m_Data: 51504
-    - m_Data: 51506
-    - m_Data: 51508
-    - m_Data: 51510
+    - m_Data: 51516
+    - m_Data: 51518
+    - m_Data: 51520
+    - m_Data: 51522
+    - m_Data: 51524
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1084,8 +1080,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "Inspector\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 1510
-    y: 79
+    x: 1511
+    y: 24
     width: 409
     height: 955
   m_SerializedDataModeController:
@@ -1136,7 +1132,7 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 79
+    y: 24
     width: 214
     height: 596
   m_SerializedDataModeController:
@@ -1689,7 +1685,7 @@ MonoBehaviour:
   m_Position:
     m_Target: {x: 6.4921527, y: 39.864475, z: -1.4133865}
     speed: 2
-    m_Value: {x: 6.9822626, y: 39.764305, z: -1.4184843}
+    m_Value: {x: 6.4921527, y: 39.864475, z: -1.4133865}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1741,7 +1737,7 @@ MonoBehaviour:
   m_Size:
     m_Target: 10.8187895
     speed: 2
-    m_Value: 11.328575
+    m_Value: 10.8187895
   m_Ortho:
     m_Target: 1
     speed: 2

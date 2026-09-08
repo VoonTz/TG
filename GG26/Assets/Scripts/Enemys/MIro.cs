@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -45,10 +46,10 @@ public class Miro : MonoBehaviour
 
     [Header("Animation")]
     [SerializeField] private Animator anim;
-    [SerializeField] private string paramIsMoving = "isMoving";
-    [SerializeField] private string paramDoAttack = "doAttack";
+    [SerializeField] private string paramIsMoving = "IsWalking";
+    [SerializeField] private string paramDoAttack = "IsAttacking";
     [SerializeField] private string paramIsDead = "isDead";
-    [SerializeField] private float deathAnimTime = 0.5f;
+    [SerializeField] private float deathAnimTime = 1f;
 
     [Header("SFX")]
     [SerializeField] private AudioSource audioSource;
@@ -659,46 +660,38 @@ public class Miro : MonoBehaviour
 
     private void Die()
     {
-        if (isDead)
-            return;
-
+        if (isDead) return;
 
         isDead = true;
 
-        state = State.DEAD;
-
-        isAttacking = false;
-
-        attackTimer = 0f;
-
-        cooldownTimer = 0f;
-
+        // Ativa o estado de morte
+        anim.SetTrigger("IsDead");
 
         // Para o inimigo
         rb.linearVelocity = Vector2.zero;
 
+        // Impede o inimigo de continuar causando/interagindo
+        GetComponent<Collider2D>().enabled = false;
 
-        // Animação
-        SetMoving(false);
-
-        SetDead(true);
-
+        // Tira a tag de Enemy
+        gameObject.tag = "Untagged";
 
         // SFX de morte
         PlaySFX(deathSFX);
 
-
-        // Conta kill
+        // Registra a morte do inimigo
         Player.RegisterEnemyKill();
 
-
-        // Espera animação
-        Destroy(
-            gameObject,
-            deathAnimTime
-        );
+        // Espera a animação terminar e destrói
+        StartCoroutine(AtrasoDelay());
     }
 
+    private IEnumerator AtrasoDelay()
+    {
+        yield return new WaitForSeconds(deathAnimTime);
+
+        Destroy(gameObject);
+    }
 
     // ============================================================
     // SFX
@@ -827,4 +820,5 @@ public class Miro : MonoBehaviour
             minimumDistance
         );
     }
+
 }

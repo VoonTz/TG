@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -40,6 +41,7 @@ public class DashEnemy : MonoBehaviour
     [SerializeField] private string paramIsMoving = "isMoving";
     [SerializeField] private string paramDoDash = "doDash";
     [SerializeField] private string paramIsDead = "isDead";
+    [SerializeField] private float deathAnimTime = 1f;
 
     // =========================================================
     // AUDIO
@@ -565,7 +567,8 @@ public class DashEnemy : MonoBehaviour
             return;
 
         isDead = true;
-        state = State.DEAD;
+
+        anim.SetTrigger("IsDead");
 
         rb.linearVelocity = Vector2.zero;
         rb.simulated = false;
@@ -579,7 +582,14 @@ public class DashEnemy : MonoBehaviour
         // Toca o som de morte
         PlaySFX(deathSFX);
 
-        Destroy(gameObject, 0.5f);
+        StartCoroutine(Delay());
+
+    }
+    private IEnumerator Delay()
+    {
+        yield return new WaitForSeconds(deathAnimTime);
+
+        Destroy(gameObject);
     }
 
     // =========================================================
