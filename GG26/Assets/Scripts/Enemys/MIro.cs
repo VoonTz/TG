@@ -1,3 +1,4 @@
+
 using System.Collections;
 using UnityEngine;
 
@@ -20,6 +21,13 @@ public class Miro : MonoBehaviour
     [SerializeField] private float chaseSpeed = 1.5f;
     [SerializeField] private float aggroRange = 6f;
 
+    [Header("Lose Aggro")]
+    [Tooltip("Distância além da qual o Miro perde o aggro.")]
+    [SerializeField] private float loseAggroRange = 8f;
+
+    [Header("Movement Reaction Delay")]
+    [SerializeField] private float closeReactionDelay = 0.25f;
+
     [Header("Wander")]
     [SerializeField] private float wanderSpeed = 1f;
     [SerializeField] private float wanderChangeTime = 1f;
@@ -27,10 +35,7 @@ public class Miro : MonoBehaviour
 
     [Header("Ranged Attack")]
     [SerializeField] private float shootingRange = 4f;
-
-    // Distância mínima que o inimigo tenta manter do player
     [SerializeField] private float minimumDistance = 2.5f;
-
     [SerializeField] private float shootWindupTime = 0.3f;
     [SerializeField] private float shootCooldown = 1.5f;
 
@@ -38,6 +43,7 @@ public class Miro : MonoBehaviour
     [SerializeField] private GameObject projectilePrefab;
     [SerializeField] private Transform firePoint;
     [SerializeField] private float projectileSpeed = 7f;
+    [SerializeField] private Transform playerCenter;
 
     [Header("Collision / World")]
     [SerializeField] private LayerMask obstacleMask;
@@ -53,11 +59,9 @@ public class Miro : MonoBehaviour
 
     [Header("SFX")]
     [SerializeField] private AudioSource audioSource;
-
     [SerializeField] private AudioClip shootSFX;
     [SerializeField] private AudioClip deathSFX;
     [SerializeField] private AudioClip hurtSFX;
-
     [SerializeField] private float sfxVolume = 1f;
 
     private int currentHealth;
@@ -72,19 +76,20 @@ public class Miro : MonoBehaviour
     private float attackTimer;
     private float cooldownTimer;
 
+    private float closeReactionTimer;
+    private bool waitingToRetreat;
+
+    private bool isRetreating;
+
     private State state = State.WANDER;
 
-    // Wander
     private Vector2 wanderDir;
     private float wanderTimer;
 
-    // Animator
     private bool lastMoving;
 
-    // Collision Cast
     private readonly RaycastHit2D[] castHits = new RaycastHit2D[8];
     private ContactFilter2D castFilter;
-
 
     // ============================================================
     // UNITY
@@ -112,15 +117,28 @@ public class Miro : MonoBehaviour
         SetDead(false);
     }
 
-
     private void Start()
     {
         GameObject p = GameObject.FindGameObjectWithTag("Player");
 
         if (p != null)
+        {
             player = p.transform;
-    }
 
+            Transform center = player.Find("Center");
+
+            if (center != null)
+            {
+                playerCenter = center;
+            }
+            else
+            {
+                Debug.LogWarning(
+                    "O objeto Center não foi encontrado dentro do Player."
+                );
+            }
+        }
+    }
 
     private void Update()
     {
@@ -133,7 +151,6 @@ public class Miro : MonoBehaviour
         if (player == null)
             return;
 
-
         // ========================================================
         // COOLDOWN DO TIRO
         // ========================================================
@@ -141,23 +158,48 @@ public class Miro : MonoBehaviour
         if (cooldownTimer > 0f)
             cooldownTimer -= Time.deltaTime;
 
-
         // ========================================================
-        // AGGRO
+        // DISTÂNCIA E AGGRO
         // ========================================================
 
-        if (!aggroed)
+        float dist = Vector2.Distance(
+            transform.position,
+            player.position
+        );
+
+        // Se estiver agressivo e o Player sair do alcance,
+        // perde o aggro e volta ao comportamento de patrulha.
+        float effectiveLoseRange = Mathf.Max(
+            loseAggroRange,
+            aggroRange
+        );
+
+        if (aggroed && dist > effectiveLoseRange)
         {
-            float dist =
-                Vector2.Distance(
-                    transform.position,
-                    player.position
-                );
+            aggroed = false;
 
-            if (dist <= aggroRange)
-                aggroed = true;
+            // Cancela um ataque que ainda não terminou.
+            isAttacking = false;
+            attackTimer = 0f;
+
+            waitingToRetreat = false;
+            closeReactionTimer = 0f;
+
+            rb.linearVelocity = Vector2.zero;
+
+            if (anim != null)
+                anim.ResetTrigger(paramDoAttack);
+
+            PickNewWanderDirection();
         }
 
+        // Só adquire aggro quando o Player entra no alcance inicial.
+        if (!aggroed && dist <= aggroRange)
+        {
+            aggroed = true;
+            wanderDir = Vector2.zero;
+            wanderTimer = 0f;
+        }
 
         // ========================================================
         // ESTÁ ATACANDO
@@ -166,12 +208,9 @@ public class Miro : MonoBehaviour
         if (isAttacking)
         {
             state = State.ATTACK;
-
             SetMoving(false);
-
             return;
         }
-
 
         // ========================================================
         // WANDER / COMBATE
@@ -184,22 +223,13 @@ public class Miro : MonoBehaviour
             if (wanderTimer <= 0f)
                 PickNewWanderDirection();
 
-            state =
-                wanderDir == Vector2.zero
-                    ? State.IDLE
-                    : State.WANDER;
+            state = wanderDir == Vector2.zero
+                ? State.IDLE
+                : State.WANDER;
         }
         else
         {
-            float dist =
-                Vector2.Distance(
-                    transform.position,
-                    player.position
-                );
-
-            // Dentro do alcance de tiro
-            if (dist <= shootingRange &&
-                cooldownTimer <= 0f)
+            if (dist <= shootingRange && cooldownTimer <= 0f)
             {
                 state = State.ATTACK;
             }
@@ -210,7 +240,6 @@ public class Miro : MonoBehaviour
         }
     }
 
-
     private void FixedUpdate()
     {
         if (isDead)
@@ -219,7 +248,6 @@ public class Miro : MonoBehaviour
         if (player == null)
             return;
 
-
         // ========================================================
         // ATAQUE
         // ========================================================
@@ -227,12 +255,9 @@ public class Miro : MonoBehaviour
         if (isAttacking)
         {
             DoAttackCycle();
-
             SetMoving(false);
-
             return;
         }
-
 
         // ========================================================
         // WANDER
@@ -240,52 +265,39 @@ public class Miro : MonoBehaviour
 
         if (!aggroed)
         {
-            bool moved =
-                TryMove(
-                    wanderDir,
-                    wanderSpeed
-                );
-
+            bool moved = TryMove(wanderDir, wanderSpeed);
             SetMoving(moved);
-
             return;
         }
-
 
         // ========================================================
         // DISTÂNCIA DO PLAYER
         // ========================================================
 
-        float dist =
-            Vector2.Distance(
-                rb.position,
-                player.position
-            );
-
+        float dist = Vector2.Distance(
+            rb.position,
+            player.position
+        );
 
         // ========================================================
         // COMEÇA A ATACAR
         // ========================================================
 
         if (dist <= shootingRange &&
-            cooldownTimer <= 0f)
+            cooldownTimer <= 0f &&
+            !isRetreating)
         {
             StartAttack();
-
             SetMoving(false);
-
             return;
         }
-
 
         // ========================================================
         // DIREÇÃO DO PLAYER
         // ========================================================
 
         Vector2 dirToPlayer =
-            ((Vector2)player.position - rb.position)
-            .normalized;
-
+            ((Vector2)player.position - rb.position).normalized;
 
         // ========================================================
         // PLAYER ESTÁ PERTO DEMAIS
@@ -293,49 +305,84 @@ public class Miro : MonoBehaviour
 
         if (dist < minimumDistance)
         {
-            // Direção oposta ao player
-            Vector2 retreatDirection =
-                -dirToPlayer;
+            if (!waitingToRetreat)
+            {
+                isRetreating = false;
 
-            bool moved =
-                TryMove(
-                    retreatDirection,
-                    chaseSpeed
-                );
+                waitingToRetreat = true;
+                closeReactionTimer = closeReactionDelay;
+
+                rb.linearVelocity = Vector2.zero;
+                SetMoving(false);
+                return;
+            }
+
+            if (closeReactionTimer > 0f)
+            {
+                closeReactionTimer -= Time.fixedDeltaTime;
+
+                rb.linearVelocity = Vector2.zero;
+                SetMoving(false);
+                return;
+            }
+
+            Vector2 retreatDirection = -dirToPlayer;
+
+            isRetreating = true;
+
+            bool moved = TryMove(retreatDirection, chaseSpeed);
 
             SetMoving(moved);
-
             return;
         }
 
+        // O Player saiu da distância mínima.
+        waitingToRetreat = false;
+        closeReactionTimer = 0f;
+        isRetreating = false;
 
         // ========================================================
-        // PLAYER ESTÁ LONGE DEMAIS
+        // PLAYER ESTÁ LONGE DEMAIS PARA ATIRAR
         // ========================================================
 
         if (dist > shootingRange)
         {
-            bool moved =
-                TryMove(
-                    dirToPlayer,
-                    chaseSpeed
-                );
-
+            bool moved = TryMove(dirToPlayer, chaseSpeed);
             SetMoving(moved);
-
             return;
         }
-
 
         // ========================================================
         // ESTÁ NA DISTÂNCIA IDEAL
         // ========================================================
 
         rb.linearVelocity = Vector2.zero;
-
         SetMoving(false);
     }
 
+    // ============================================================
+    // ACHAR O CENTRO DO PLAYER
+    // ============================================================
+
+    private Vector2 GetPlayerCenter()
+    {
+        if (player == null)
+            return Vector2.zero;
+
+        Collider2D playerCollider =
+            player.GetComponentInChildren<Collider2D>();
+
+        if (playerCollider != null)
+            return playerCollider.bounds.center;
+
+        SpriteRenderer sprite =
+            player.GetComponentInChildren<SpriteRenderer>();
+
+        if (sprite != null)
+            return sprite.bounds.center;
+
+        return player.position;
+    }
 
     // ============================================================
     // ATAQUE
@@ -347,46 +394,33 @@ public class Miro : MonoBehaviour
             return;
 
         isAttacking = true;
-
         attackTimer = 0f;
 
         rb.linearVelocity = Vector2.zero;
 
-
-        // Animação de ataque
         if (anim != null)
             anim.SetTrigger(paramDoAttack);
 
         SetMoving(false);
     }
 
-
     private void DoAttackCycle()
     {
         rb.linearVelocity = Vector2.zero;
-
         attackTimer += Time.fixedDeltaTime;
 
-
-        // Tempo de preparação
+        // Tempo de preparação do disparo.
         if (attackTimer < shootWindupTime)
             return;
 
-
-        // Atira
         Shoot();
 
-
-        // Finaliza ataque
         isAttacking = false;
-
         attackTimer = 0f;
-
         cooldownTimer = shootCooldown;
 
         SetMoving(false);
     }
-
 
     // ============================================================
     // DISPARO
@@ -394,75 +428,54 @@ public class Miro : MonoBehaviour
 
     private void Shoot()
     {
-        if (projectilePrefab == null)
-        {
-            Debug.LogWarning(
-                $"{name}: Projectile Prefab não configurado."
-            );
-
+        if (firePoint == null || projectilePrefab == null)
             return;
-        }
 
-        if (firePoint == null)
-        {
-            Debug.LogWarning(
-                $"{name}: Fire Point não configurado."
-            );
+        Transform targetTransform =
+            playerCenter != null ? playerCenter : player;
 
+        if (targetTransform == null)
             return;
-        }
 
+        Vector2 origin = firePoint.position;
+        Vector2 target = targetTransform.position;
 
-        // ========================================================
-        // DIREÇÃO DO TIRO
-        // ========================================================
+        Vector2 direction = (target - origin).normalized;
 
-        Vector2 direction =
-            (
-                (Vector2)player.position -
-                (Vector2)firePoint.position
-            ).normalized;
+        Debug.DrawRay(origin, direction * 5f, Color.red, 1f);
 
+        // Cria o projétil no eixo Z = -1.
+        Vector3 spawnPosition = firePoint.position;
+        spawnPosition.z = -1f;
 
-        // ========================================================
-        // CRIA PROJÉTIL
-        // ========================================================
+        GameObject projectile = Instantiate(
+            projectilePrefab,
+            spawnPosition,
+            Quaternion.identity
+        );
 
-        GameObject projectile =
-            Instantiate(
-                projectilePrefab,
-                firePoint.position,
-                Quaternion.identity
-            );
-
-
-        // ========================================================
-        // IGNORA O PRÓPRIO INIMIGO
-        // ========================================================
+        // Ignora colisão com os colliders do próprio Miro.
+        Collider2D bulletCollider =
+            projectile.GetComponent<Collider2D>();
 
         Collider2D[] enemyColliders =
             GetComponentsInChildren<Collider2D>();
 
-        Collider2D[] projectileColliders =
-            projectile.GetComponentsInChildren<Collider2D>();
-
-
-        foreach (Collider2D enemyCollider in enemyColliders)
+        if (bulletCollider != null)
         {
-            foreach (Collider2D projectileCollider in projectileColliders)
+            foreach (Collider2D enemyCollider in enemyColliders)
             {
-                Physics2D.IgnoreCollision(
-                    projectileCollider,
-                    enemyCollider
-                );
+                if (enemyCollider != null)
+                {
+                    Physics2D.IgnoreCollision(
+                        bulletCollider,
+                        enemyCollider
+                    );
+                }
             }
         }
 
-
-        // ========================================================
-        // VELOCIDADE DO PROJÉTIL
-        // ========================================================
-
+        // Define a direção e a velocidade do projétil.
         Rigidbody2D projectileRb =
             projectile.GetComponent<Rigidbody2D>();
 
@@ -472,122 +485,76 @@ public class Miro : MonoBehaviour
                 direction * projectileSpeed;
         }
 
-
-        // ========================================================
-        // ROTAÇÃO DO PROJÉTIL
-        // ========================================================
-
+        // Rotação visual do projétil.
         float angle =
-            Mathf.Atan2(
-                direction.y,
-                direction.x
-            ) * Mathf.Rad2Deg;
+            Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
         projectile.transform.rotation =
-            Quaternion.Euler(
-                0f,
-                0f,
-                angle
-            );
-
-
-        // ========================================================
-        // SFX DO TIRO
-        // ========================================================
+            Quaternion.Euler(0f, 0f, angle);
 
         PlaySFX(shootSFX);
     }
-
 
     // ============================================================
     // MOVIMENTO
     // ============================================================
 
-    private bool TryMove(
-        Vector2 direction,
-        float speed
-    )
+    private bool TryMove(Vector2 direction, float speed)
     {
         if (direction.sqrMagnitude < 0.0001f)
             return false;
 
-
         Vector2 delta =
-            direction.normalized *
-            speed *
-            Time.fixedDeltaTime;
+            direction.normalized * speed * Time.fixedDeltaTime;
 
-
-        int hitCount =
-            rb.Cast(
-                delta.normalized,
-                castFilter,
-                castHits,
-                delta.magnitude + castSkin
-            );
-
+        int hitCount = rb.Cast(
+            delta.normalized,
+            castFilter,
+            castHits,
+            delta.magnitude + castSkin
+        );
 
         if (hitCount > 0)
         {
             float minDist = float.MaxValue;
-
 
             for (int i = 0; i < hitCount; i++)
             {
                 if (castHits[i].collider == null)
                     continue;
 
-                minDist =
-                    Mathf.Min(
-                        minDist,
-                        castHits[i].distance
-                    );
+                minDist = Mathf.Min(
+                    minDist,
+                    castHits[i].distance
+                );
             }
 
-
-            float allowed =
-                Mathf.Max(
-                    0f,
-                    minDist - castSkin
-                );
-
+            float allowed = Mathf.Max(
+                0f,
+                minDist - castSkin
+            );
 
             bool moved = false;
-
 
             if (allowed > 0f)
             {
                 Vector2 safeDelta =
-                    delta.normalized *
-                    allowed;
+                    delta.normalized * allowed;
 
-                rb.MovePosition(
-                    rb.position +
-                    safeDelta
-                );
-
+                rb.MovePosition(rb.position + safeDelta);
                 moved = true;
             }
 
-
-            // Se estiver vagando e bater
-            // em uma parede, troca direção
+            // Se estiver vagando e bater em uma parede, troca direção.
             if (changeDirOnHit && !aggroed)
                 PickNewWanderDirection();
-
 
             return moved;
         }
 
-
-        rb.MovePosition(
-            rb.position +
-            delta
-        );
-
+        rb.MovePosition(rb.position + delta);
         return true;
     }
-
 
     // ============================================================
     // WANDER
@@ -597,29 +564,19 @@ public class Miro : MonoBehaviour
     {
         wanderTimer = wanderChangeTime;
 
-
         if (Random.value < wanderIdleChance)
         {
             wanderDir = Vector2.zero;
-
             return;
         }
 
+        float angle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
 
-        float angle =
-            Random.Range(
-                0f,
-                360f
-            ) * Mathf.Deg2Rad;
-
-
-        wanderDir =
-            new Vector2(
-                Mathf.Cos(angle),
-                Mathf.Sin(angle)
-            ).normalized;
+        wanderDir = new Vector2(
+            Mathf.Cos(angle),
+            Mathf.Sin(angle)
+        ).normalized;
     }
-
 
     // ============================================================
     // DANO
@@ -630,29 +587,22 @@ public class Miro : MonoBehaviour
         if (isDead)
             return;
 
-
         currentHealth -= amount;
 
-
-        // Toma dano = fica agressivo
+        // Receber dano deixa o Miro agressivo.
         if (!aggroed)
         {
             aggroed = true;
 
             wanderDir = Vector2.zero;
-
             wanderTimer = 0f;
         }
 
-
-        // SFX de dano
         PlaySFX(hurtSFX);
-
 
         if (currentHealth <= 0)
             Die();
     }
-
 
     // ============================================================
     // MORTE
@@ -660,36 +610,33 @@ public class Miro : MonoBehaviour
 
     private void Die()
     {
-        if (isDead) return;
+        if (isDead)
+            return;
 
         isDead = true;
 
-        // Ativa o estado de morte
-        anim.SetTrigger("IsDead");
+        if (anim != null)
+            anim.SetTrigger("IsDead");
 
-        // Para o inimigo
         rb.linearVelocity = Vector2.zero;
 
-        // Impede o inimigo de continuar causando/interagindo
-        GetComponent<Collider2D>().enabled = false;
+        Collider2D ownCollider = GetComponent<Collider2D>();
 
-        // Tira a tag de Enemy
+        if (ownCollider != null)
+            ownCollider.enabled = false;
+
         gameObject.tag = "Untagged";
 
-        // SFX de morte
         PlaySFX(deathSFX);
 
-        // Registra a morte do inimigo
         Player.RegisterEnemyKill();
 
-        // Espera a animação terminar e destrói
         StartCoroutine(AtrasoDelay());
     }
 
     private IEnumerator AtrasoDelay()
     {
         yield return new WaitForSeconds(deathAnimTime);
-
         Destroy(gameObject);
     }
 
@@ -699,19 +646,11 @@ public class Miro : MonoBehaviour
 
     private void PlaySFX(AudioClip clip)
     {
-        if (audioSource == null)
+        if (audioSource == null || clip == null)
             return;
 
-        if (clip == null)
-            return;
-
-
-        audioSource.PlayOneShot(
-            clip,
-            sfxVolume
-        );
+        audioSource.PlayOneShot(clip, sfxVolume);
     }
-
 
     // ============================================================
     // ANIMAÇÃO
@@ -722,33 +661,20 @@ public class Miro : MonoBehaviour
         if (anim == null)
             return;
 
-
         if (moving == lastMoving)
             return;
 
-
         lastMoving = moving;
-
-
-        anim.SetBool(
-            paramIsMoving,
-            moving
-        );
+        anim.SetBool(paramIsMoving, moving);
     }
-
 
     private void SetDead(bool dead)
     {
         if (anim == null)
             return;
 
-
-        anim.SetBool(
-            paramIsDead,
-            dead
-        );
+        anim.SetBool(paramIsDead, dead);
     }
-
 
     // ============================================================
     // RESET
@@ -757,36 +683,27 @@ public class Miro : MonoBehaviour
     public void ResetEnemyState()
     {
         aggroed = false;
-
         isAttacking = false;
-
         isDead = false;
 
-
         attackTimer = 0f;
-
         cooldownTimer = 0f;
 
+        closeReactionTimer = 0f;
+        waitingToRetreat = false;
 
         currentHealth = maxHealth;
 
-
         rb.linearVelocity = Vector2.zero;
-
         rb.simulated = true;
-
 
         state = State.WANDER;
 
-
         PickNewWanderDirection();
 
-
         SetDead(false);
-
         SetMoving(false);
     }
-
 
     // ============================================================
     // DEBUG
@@ -794,31 +711,32 @@ public class Miro : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        // Aggro
+        // Alcance inicial para detectar o Player.
         Gizmos.color = Color.yellow;
-
         Gizmos.DrawWireSphere(
             transform.position,
             aggroRange
         );
 
+        // Alcance máximo antes de perder o aggro.
+        Gizmos.color = Color.magenta;
+        Gizmos.DrawWireSphere(
+            transform.position,
+            Mathf.Max(loseAggroRange, aggroRange)
+        );
 
-        // Alcance de tiro
+        // Alcance de tiro.
         Gizmos.color = Color.red;
-
         Gizmos.DrawWireSphere(
             transform.position,
             shootingRange
         );
 
-
-        // Distância mínima
+        // Distância mínima.
         Gizmos.color = Color.blue;
-
         Gizmos.DrawWireSphere(
             transform.position,
             minimumDistance
         );
     }
-
 }
