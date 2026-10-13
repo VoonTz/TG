@@ -1,3 +1,4 @@
+
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -39,7 +40,26 @@ public class Player : MonoBehaviour
     [SerializeField] private float collisionInvulnTime = 0.6f;
 
     [Header("Damage / Death Animation")]
-    [SerializeField] private float hitInvulnTime = 1f; // 1s de invuln enquanto toca "dano"
+    [SerializeField] private float hitInvulnTime = 1f;
+
+    [Header("SFX - Audio Source")]
+    [SerializeField] private AudioSource sfxSource;
+
+    [Header("SFX - Movement")]
+    [SerializeField] private AudioClip walkSFX;
+    [SerializeField] private AudioClip sprintSFX;
+    [SerializeField] private float walkStepInterval = 0.4f;
+    [SerializeField] private float sprintStepInterval = 0.25f;
+
+    [Header("SFX - Actions")]
+    [SerializeField] private AudioClip shootSFX;
+    [SerializeField] private AudioClip damageSFX;
+    [SerializeField] private AudioClip deathSFX;
+    [SerializeField] private AudioClip healSFX;
+
+    [Header("SFX - Volume")]
+    [Range(0f, 1f)]
+    [SerializeField] private float sfxVolume = 1f;
 
     private Rigidbody2D rb;
     private Vector2 moveInput;
@@ -47,12 +67,12 @@ public class Player : MonoBehaviour
 
     private float currentStamina;
     private bool isSprinting;
-
     private bool isExhausted;
     private float cooldownTimer;
 
     private float collisionInvulnTimer = 0f;
     private float hitInvulnTimer = 0f;
+    private float footstepTimer = 0f;
 
     private bool isDead = false;
 
@@ -65,7 +85,15 @@ public class Player : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         mainCam = Camera.main;
 
-        if (anim == null) anim = GetComponent<Animator>();
+        if (anim == null)
+            anim = GetComponent<Animator>();
+
+        // Cria um AudioSource caso nenhum tenha sido atribuído.
+        if (sfxSource == null)
+            sfxSource = gameObject.AddComponent<AudioSource>();
+
+        sfxSource.playOnAwake = false;
+        sfxSource.loop = false;
     }
 
     private void Start()
@@ -86,23 +114,25 @@ public class Player : MonoBehaviour
             GameManager.Instance.maxHealth
         );
 
-        isDead = (GameManager.Instance.currentHealth <= 0);
+        isDead = GameManager.Instance.currentHealth <= 0;
+
         if (anim != null)
-        {
             anim.SetBool("Dead", isDead);
-        }
-            
+
+        if (isDead && rb != null)
+            rb.linearVelocity = Vector2.zero;
     }
 
     private void Update()
     {
-        // timers
-        if (collisionInvulnTimer > 0f) collisionInvulnTimer -= Time.deltaTime;
-        if (hitInvulnTimer > 0f) hitInvulnTimer -= Time.deltaTime;
+        if (collisionInvulnTimer > 0f)
+            collisionInvulnTimer -= Time.deltaTime;
+
+        if (hitInvulnTimer > 0f)
+            hitInvulnTimer -= Time.deltaTime;
 
         if (isDead)
         {
-            // trava tudo quando morreu
             rb.linearVelocity = Vector2.zero;
             return;
         }
@@ -112,6 +142,7 @@ public class Player : MonoBehaviour
         moveInput = moveInput.normalized;
 
         HandleSprint();
+        HandleFootsteps();
         RotateHandToMouse();
         HandleShoot();
         UpdateAnimations();
@@ -122,7 +153,10 @@ public class Player : MonoBehaviour
     {
         if (isDead) return;
 
-        float speed = isSprinting ? moveSpeed * sprintMultiplier : moveSpeed;
+        float speed = isSprinting
+            ? moveSpeed * sprintMultiplier
+            : moveSpeed;
+
         rb.linearVelocity = moveInput * speed;
     }
 
@@ -139,6 +173,7 @@ public class Player : MonoBehaviour
                 currentStamina = maxStamina;
                 cooldownTimer = 0f;
             }
+
             return;
         }
 
@@ -165,11 +200,45 @@ public class Player : MonoBehaviour
             if (currentStamina < maxStamina)
             {
                 float rechargeRate = maxStamina / slowRechargeTime;
+
                 currentStamina += rechargeRate * Time.deltaTime;
-                currentStamina = Mathf.Clamp(currentStamina, 0f, maxStamina);
+                currentStamina = Mathf.Clamp(
+                    currentStamina, 0f, maxStamina
+                );
             }
         }
     }
+
+    // ====== SFX DE MOVIMENTO ======
+
+    private void HandleFootsteps()
+    {
+        bool isMoving = moveInput.sqrMagnitude > 0.0001f;
+
+        if (!isMoving)
+        {
+            footstepTimer = 0f;
+            return;
+        }
+
+        footstepTimer -= Time.deltaTime;
+
+        if (footstepTimer > 0f)
+            return;
+
+        if (isSprinting)
+        {
+            PlaySFX(sprintSFX);
+            footstepTimer = sprintStepInterval;
+        }
+        else
+        {
+            PlaySFX(walkSFX);
+            footstepTimer = walkStepInterval;
+        }
+    }
+
+    // ====== ANIMAÇÕES ======
 
     private void UpdateAnimations()
     {
@@ -180,80 +249,115 @@ public class Player : MonoBehaviour
         anim.SetBool("Idle", !isMoving);
         anim.SetBool("Front", isMoving);
 
-        if (!isMoving) anim.speed = 1f;
-        else anim.speed = isSprinting ? (sprintAnimFps / walkAnimFps) : 1f;
+        if (!isMoving)
+            anim.speed = 1f;
+        else
+            anim.speed = isSprinting
+                ? sprintAnimFps / walkAnimFps
+                : 1f;
     }
+
+    // ====== MIRA ======
 
     private void RotateHandToMouse()
     {
-        if (handPivot == null || mainCam == null) return;
-        if (isDead) return;
+        if (handPivot == null || mainCam == null || isDead)
+            return;
 
-        Vector3 mouseWorld = mainCam.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 dir = (mouseWorld - handPivot.position);
+        Vector3 mouseWorld =
+            mainCam.ScreenToWorldPoint(Input.mousePosition);
+
+        Vector2 dir = mouseWorld - handPivot.position;
+
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
 
         handPivot.rotation = Quaternion.Euler(0f, 0f, angle);
     }
+
+    // ====== TIRO ======
 
     private void HandleShoot()
     {
         if (isDead) return;
         if (bulletPrefab == null || muzzle == null) return;
         if (!Input.GetMouseButton(0)) return;
-
         if (Time.time < nextFireTime) return;
+        if (fireRate <= 0f) return;
+
         nextFireTime = Time.time + (1f / fireRate);
 
-        GameObject bullet = Instantiate(bulletPrefab, muzzle.position, muzzle.rotation);
+        GameObject bullet = Instantiate(
+            bulletPrefab,
+            muzzle.position,
+            muzzle.rotation
+        );
+
         Rigidbody2D brb = bullet.GetComponent<Rigidbody2D>();
+
         if (brb != null)
             brb.linearVelocity = (Vector2)muzzle.right * bulletSpeed;
+
+        // Som de disparo
+        PlaySFX(shootSFX);
     }
+
+    // ====== CURA ======
 
     private void HandleHealInput()
     {
         if (isDead) return;
-
         if (!Input.GetKeyDown(healKey)) return;
         if (GameManager.Instance.healCharges <= 0) return;
         if (GameManager.Instance.currentHealth <= 0) return;
 
         int before = GameManager.Instance.currentHealth;
+
         GameManager.Instance.currentHealth = Mathf.Min(
             GameManager.Instance.maxHealth,
             GameManager.Instance.currentHealth + healAmount
         );
+
         GameManager.Instance.UpdateUI();
+
         if (GameManager.Instance.currentHealth > before)
+        {
             GameManager.Instance.healCharges = 0;
+
+            // Som de cura somente se recuperou vida
+            PlaySFX(healSFX);
+        }
     }
 
     // ====== DANO / VIDA ======
+
     public void TakeDamage(int amount)
     {
         if (amount <= 0) return;
         if (isDead) return;
         if (GameManager.Instance.currentHealth <= 0) return;
-
-        // invuln geral (dano + colisão)
         if (hitInvulnTimer > 0f) return;
 
         GameManager.Instance.currentHealth -= amount;
-        GameManager.Instance.currentHealth = Mathf.Max(0, GameManager.Instance.currentHealth);
-        GameManager.Instance.UpdateUI();
 
-        // toca animação de dano e dá 1s invuln
-        if (anim != null)
-            anim.SetTrigger("Hit");
+        GameManager.Instance.currentHealth = Mathf.Max(
+            0, GameManager.Instance.currentHealth
+        );
+
+        GameManager.Instance.UpdateUI();
 
         hitInvulnTimer = hitInvulnTime;
 
-        // morreu?
         if (GameManager.Instance.currentHealth <= 0)
         {
             Die();
             Invoke(nameof(ShowGameOver), 1.5f);
+        }
+        else
+        {
+            if (anim != null)
+                anim.SetTrigger("Hit");
+
+            PlaySFX(damageSFX);
         }
     }
 
@@ -264,23 +368,27 @@ public class Player : MonoBehaviour
 
     private void Die()
     {
+        if (isDead) return;
+
         isDead = true;
 
-        // trava movimento instant
         rb.linearVelocity = Vector2.zero;
+        footstepTimer = 0f;
 
         if (anim != null)
             anim.SetBool("Dead", true);
 
-        
+        // Som de morte apenas uma vez
+        PlaySFX(deathSFX);
     }
 
-    // colisão com inimigo = 1 de dano (sem trigger)
+    // ====== COLISÃO COM INIMIGOS ======
+
     private void OnCollisionStay2D(Collision2D collision)
     {
         if (isDead) return;
         if (collisionInvulnTimer > 0f) return;
-        if (hitInvulnTimer > 0f) return; // enquanto toma dano, não toma mais nada
+        if (hitInvulnTimer > 0f) return;
         if (collision.collider == null) return;
 
         if (collision.collider.CompareTag("Enemy"))
@@ -290,44 +398,32 @@ public class Player : MonoBehaviour
         }
     }
 
-    // ====== KILLS -> RECARGA CURA ======
+    // ====== KILLS -> RECARGA DA CURA ======
+
     public static void RegisterEnemyKill()
     {
         if (instance == null) return;
 
-        if (GameManager.Instance.healCharges >= 1) return;
+        if (GameManager.Instance.healCharges >= 1)
+            return;
 
         GameManager.Instance.killsSinceRestore++;
 
-        if (GameManager.Instance.killsSinceRestore >= instance.killsToRestoreHeal)
+        if (GameManager.Instance.killsSinceRestore >=
+            instance.killsToRestoreHeal)
         {
             GameManager.Instance.killsSinceRestore = 0;
             GameManager.Instance.healCharges = 1;
         }
     }
 
-    /*
-    private void OnGUI()
+    // ====== SISTEMA CENTRAL DE SFX ======
+
+    private void PlaySFX(AudioClip clip)
     {
-        GUI.Label(new Rect(10, 10, 260, 20), "Velocidade: " + rb.linearVelocity.magnitude.ToString("F2"));
-        GUI.Label(new Rect(10, 30, 260, 20), $"Vida: {GameManager.Instance.currentHealth}/{GameManager.Instance.maxHealth}");
-        GUI.Label(new Rect(10, 50, 260, 20), "Stamina: " + currentStamina.ToString("F2") + " / " + maxStamina.ToString("F0"));
+        if (clip == null || sfxSource == null)
+            return;
 
-        if (isExhausted)
-            GUI.Label(new Rect(10, 70, 260, 20), "Cooldown: " + cooldownTimer.ToString("F1") + "s");
-
-        int charges = GameManager.Instance.healCharges;
-        int killsLeft = (charges >= 1) ? 0 : Mathf.Max(0, killsToRestoreHeal - GameManager.Instance.killsSinceRestore);
-
-        string healText = (charges >= 1)
-            ? $"Cura (E): PRONTA (1/1)"
-            : $"Cura (E): {killsLeft} kills p/ recarregar";
-
-        string invText = (hitInvulnTimer > 0f) ? $"Invuln: {hitInvulnTimer:F1}s" : "";
-
-        GUI.Label(new Rect(10, 90, 320, 20), healText);
-        if (!string.IsNullOrEmpty(invText))
-            GUI.Label(new Rect(10, 110, 260, 20), invText); 
+        sfxSource.PlayOneShot(clip, sfxVolume);
     }
-    */
 }
