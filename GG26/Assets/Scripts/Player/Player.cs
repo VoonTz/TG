@@ -43,8 +43,10 @@ public class Player : MonoBehaviour
     [Header("Damage / Death Animation")]
     [SerializeField] private float hitInvulnTime = 1f;
 
-    [Header("SFX - Audio Source")]
+
+    [Header("SFX - Audio Sources")]
     [SerializeField] private AudioSource sfxSource;
+    [SerializeField] private AudioSource footstepSource;
 
     [Header("SFX - Movement")]
     [SerializeField] private AudioClip walkSFX;
@@ -61,6 +63,7 @@ public class Player : MonoBehaviour
     [Header("SFX - Volume")]
     [Range(0f, 1f)]
     [SerializeField] private float sfxVolume = 1f;
+
 
     private Rigidbody2D rb;
     private Vector2 moveInput;
@@ -90,11 +93,19 @@ public class Player : MonoBehaviour
             anim = GetComponent<Animator>();
 
         // Cria um AudioSource caso nenhum tenha sido atribuído.
+
         if (sfxSource == null)
             sfxSource = gameObject.AddComponent<AudioSource>();
 
+        if (footstepSource == null)
+            footstepSource = gameObject.AddComponent<AudioSource>();
+
         sfxSource.playOnAwake = false;
         sfxSource.loop = false;
+
+        footstepSource.playOnAwake = false;
+        footstepSource.loop = false;
+
     }
 
     private void Start()
@@ -212,13 +223,35 @@ public class Player : MonoBehaviour
 
     // ====== SFX DE MOVIMENTO ======
 
+    private void PlayFootstepSFX(AudioClip clip)
+    {
+        if (clip == null || footstepSource == null)
+            return;
+
+        // Não inicia outro passo enquanto o atual estiver tocando.
+        if (footstepSource.isPlaying)
+            return;
+
+        footstepSource.clip = clip;
+        footstepSource.volume = 0.1f;
+        footstepSource.Play();
+    }
+
+
     private void HandleFootsteps()
     {
         bool isMoving = moveInput.sqrMagnitude > 0.0001f;
 
+        // Se o jogador parar de andar, para apenas os passos.
         if (!isMoving)
         {
             footstepTimer = 0f;
+
+            if (footstepSource != null && footstepSource.isPlaying)
+            {
+                footstepSource.Stop();
+            }
+
             return;
         }
 
@@ -229,15 +262,16 @@ public class Player : MonoBehaviour
 
         if (isSprinting)
         {
-            PlaySFX(sprintSFX);
+            PlayFootstepSFX(sprintSFX);
             footstepTimer = sprintStepInterval;
         }
         else
         {
-            PlaySFX(walkSFX);
+            PlayFootstepSFX(walkSFX);
             footstepTimer = walkStepInterval;
         }
     }
+
 
     // ====== ANIMAÇÕES ======
 
