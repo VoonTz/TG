@@ -1,5 +1,6 @@
 
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class Player : MonoBehaviour
@@ -363,8 +364,9 @@ public class Player : MonoBehaviour
 
     private void ShowGameOver()
     {
-        GameManager.Instance.TriggerGameOver();
+        SceneManager.LoadScene("GAME OVER");
     }
+
 
     private void Die()
     {
