@@ -18458,6 +18458,7 @@ Transform:
   m_Children:
   - {fileID: 588657722}
   - {fileID: 2086916880}
+  - {fileID: 1792355415}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &421034666 stripped
@@ -22129,6 +22130,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1976195292462491014, guid: 4b3a5cdaa9efb1d40be78f115b04172f, type: 3}
+      propertyPath: shootSFX
+      value: 
+      objectReference: {fileID: 8300000, guid: 6a608eddb764e70429fd4151aa0fae2d, type: 3}
+    - target: {fileID: 1976195292462491014, guid: 4b3a5cdaa9efb1d40be78f115b04172f, type: 3}
       propertyPath: aimOffset.x
       value: 0
       objectReference: {fileID: 0}
@@ -22136,6 +22141,10 @@ PrefabInstance:
       propertyPath: aimOffset.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1976195292462491014, guid: 4b3a5cdaa9efb1d40be78f115b04172f, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 2086916879}
     - target: {fileID: 1976195292462491014, guid: 4b3a5cdaa9efb1d40be78f115b04172f, type: 3}
       propertyPath: wanderSpeed
       value: 1
@@ -22217,6 +22226,23 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4b3a5cdaa9efb1d40be78f115b04172f, type: 3}
+--- !u!1 &1278435555 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4061109925963916544, guid: c5b8bc07f9c7c1843933a892876c8996, type: 3}
+  m_PrefabInstance: {fileID: 1582206657}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1278435561
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1278435555}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29cff4f45543ced40b6329e80f65f9a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
 --- !u!1 &1295511994
 GameObject:
   m_ObjectHideFlags: 0
@@ -23314,12 +23340,44 @@ PrefabInstance:
     m_TransformParent: {fileID: 1756417600}
     m_Modifications:
     - target: {fileID: 1840746999781513920, guid: c5b8bc07f9c7c1843933a892876c8996, type: 3}
+      propertyPath: walkSFX
+      value: 
+      objectReference: {fileID: 8300000, guid: 05c54e40da57772409f6d779355d0513, type: 3}
+    - target: {fileID: 1840746999781513920, guid: c5b8bc07f9c7c1843933a892876c8996, type: 3}
+      propertyPath: shootSFX
+      value: 
+      objectReference: {fileID: 8300000, guid: 791d7df40c2f3bd4faba375b12fd9eda, type: 3}
+    - target: {fileID: 1840746999781513920, guid: c5b8bc07f9c7c1843933a892876c8996, type: 3}
+      propertyPath: damageSFX
+      value: 
+      objectReference: {fileID: 8300000, guid: 2749155ae55444041bf2d5a68c4a476f, type: 3}
+    - target: {fileID: 1840746999781513920, guid: c5b8bc07f9c7c1843933a892876c8996, type: 3}
       propertyPath: sfxSource
       value: 
       objectReference: {fileID: 2086916879}
     - target: {fileID: 1840746999781513920, guid: c5b8bc07f9c7c1843933a892876c8996, type: 3}
+      propertyPath: sfxVolume
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1840746999781513920, guid: c5b8bc07f9c7c1843933a892876c8996, type: 3}
+      propertyPath: sprintSFX
+      value: 
+      objectReference: {fileID: 8300000, guid: 71d1b30656db38145bfae3bc6249c8f7, type: 3}
+    - target: {fileID: 1840746999781513920, guid: c5b8bc07f9c7c1843933a892876c8996, type: 3}
       propertyPath: killsPerHeal
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1840746999781513920, guid: c5b8bc07f9c7c1843933a892876c8996, type: 3}
+      propertyPath: footstepSource
+      value: 
+      objectReference: {fileID: 1792355416}
+    - target: {fileID: 1840746999781513920, guid: c5b8bc07f9c7c1843933a892876c8996, type: 3}
+      propertyPath: walkStepInterval
+      value: 0.45
+      objectReference: {fileID: 0}
+    - target: {fileID: 1840746999781513920, guid: c5b8bc07f9c7c1843933a892876c8996, type: 3}
+      propertyPath: sprintStepInterval
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 4061109925963916544, guid: c5b8bc07f9c7c1843933a892876c8996, type: 3}
       propertyPath: m_Name
@@ -23407,7 +23465,10 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7060522922781771291, guid: c5b8bc07f9c7c1843933a892876c8996, type: 3}
       insertIndex: 0
       addedObject: {fileID: 1729571440}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4061109925963916544, guid: c5b8bc07f9c7c1843933a892876c8996, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1278435561}
   m_SourcePrefab: {fileID: 100100000, guid: c5b8bc07f9c7c1843933a892876c8996, type: 3}
 --- !u!1 &1661194581
 GameObject:
@@ -24233,6 +24294,135 @@ MonoBehaviour:
         m_Calls: []
   m_LegacyBlendHint: 0
   m_ComponentOwner: {fileID: 883266557}
+--- !u!1 &1792355414
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1792355415}
+  - component: {fileID: 1792355416}
+  m_Layer: 0
+  m_Name: SFX for footsteps
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1792355415
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1792355414}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 418113646}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &1792355416
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1792355414}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 0.006
+  m_Pitch: 1
+  Loop: 1
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &1800724930
 GameObject:
   m_ObjectHideFlags: 0
@@ -102732,9 +102922,9 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 0.434
+  m_Volume: 0.367
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
