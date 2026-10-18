@@ -41,6 +41,26 @@ public class Frok : MonoBehaviour
     [SerializeField] private Vector2 guiOffset = new Vector2(0f, 0.8f);
     [SerializeField] private bool debugInfo = true;
 
+
+    [Header("Audio / SFX")]
+
+    [SerializeField] private AudioSource footstepSource;
+    [SerializeField] private AudioSource sfxSource;
+
+    [Header("Sound Clips")]
+    [SerializeField] private AudioClip footstepClip;
+    [SerializeField] private AudioClip attackClip;
+    [SerializeField] private AudioClip damageClip;
+    [SerializeField] private AudioClip deathClip;
+
+    [Header("Sound Volume")]
+    [Range(0f, 1f)]
+    [SerializeField] private float footstepVolume = 0.5f;
+
+    [Range(0f, 1f)]
+    [SerializeField] private float sfxVolume = 0.8f;
+
+
     private int currentHealth;
     private Rigidbody2D rb;
     private Transform player;
@@ -91,6 +111,7 @@ public class Frok : MonoBehaviour
 
     private void Update()
     {
+
         if (isDead) { state = State.DEAD; return; }
         if (player == null) return;
 
@@ -192,21 +213,72 @@ public class Frok : MonoBehaviour
         SetMoving(movedChase);
     }
 
+    //Sons
+
+
+    private void PlaySFX(AudioClip clip)
+    {
+        if (clip == null || sfxSource == null) return;
+
+        sfxSource.PlayOneShot(clip, sfxVolume);
+    }
+
+    private void UpdateFootsteps(bool moving)
+    {
+        if (footstepSource == null) return;
+
+        if (moving && footstepClip != null)
+        {
+            if (!footstepSource.isPlaying)
+            {
+                footstepSource.clip = footstepClip;
+                footstepSource.loop = true;
+                footstepSource.volume = footstepVolume;
+                footstepSource.Play();
+            }
+        }
+        else
+        {
+            if (footstepSource.isPlaying)
+                footstepSource.Stop();
+        }
+    }
+    //
+
+
     private void StartAttack()
     {
         if (isAttacking || isDead) return;
+
+        if (anim == null)
+        {
+            Debug.LogError(
+                "Frok: Animator não encontrado! Confira o campo Anim.",
+                gameObject
+            );
+            return;
+        }
 
         isAttacking = true;
         attackTimer = 0f;
         rb.linearVelocity = Vector2.zero;
 
-        // 🔥 dispara animação de ataque UMA VEZ
-        if (anim != null) anim.SetTrigger(paramDoAttack);
-
         SetMoving(false);
+
+        anim.ResetTrigger(paramDoAttack);
+        anim.SetTrigger(paramDoAttack);
+
+        Debug.Log(
+            "Frok: ataque acionado. Trigger: " + paramDoAttack,
+            gameObject
+        );
+
+        PlaySFX(attackClip);
     }
 
-    // ✅ ataque "travado": windup -> hit (se estiver no range) -> idle 1s
+
+
+    //  ataque "travado": windup -> hit (se estiver no range) -> idle 1s
     private void DoAttackCycle()
     {
         rb.linearVelocity = Vector2.zero;
@@ -302,6 +374,8 @@ public class Frok : MonoBehaviour
             wanderTimer = 0f;
         }
 
+        if (currentHealth > 0)
+            PlaySFX(damageClip);
         // se estava vagando/parado, força chase a partir de agora
         // (se estiver atacando, ele termina o ciclo e depois volta pra chase naturalmente)
         if (currentHealth <= 0)
@@ -313,6 +387,12 @@ public class Frok : MonoBehaviour
         if (isDead) return;
 
         isDead = true;
+
+        if (footstepSource != null)
+            footstepSource.Stop();
+
+        PlaySFX(deathClip);
+
         state = State.DEAD;
 
         SetMoving(false);
@@ -337,6 +417,7 @@ public class Frok : MonoBehaviour
 
     private void SetMoving(bool moving)
     {
+        UpdateFootsteps(moving);
         if (anim == null) return;
         if (moving == lastMoving) return;
 

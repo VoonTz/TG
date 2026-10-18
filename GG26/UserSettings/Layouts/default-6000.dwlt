@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 1920
     height: 1037
   m_ShowMode: 4
-  m_Title: Game
+  m_Title: Animator
   m_RootView: {fileID: 8}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
@@ -60,7 +60,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 12006, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: GameView
+  m_Name: AnimatorControllerTool
   m_EditorClassIdentifier: UnityEditor.dll::UnityEditor.DockArea
   m_Children: []
   m_Position:
@@ -71,11 +71,11 @@ MonoBehaviour:
     height: 622
   m_MinSize: {x: 52, y: 76}
   m_MaxSize: {x: 4002, y: 4026}
-  m_ActualView: {fileID: 13}
+  m_ActualView: {fileID: 14}
   m_Panes:
   - {fileID: 14}
   - {fileID: 13}
-  m_Selected: 1
+  m_Selected: 0
   m_LastSelected: 1
 --- !u!114 &4
 MonoBehaviour:
@@ -128,7 +128,7 @@ MonoBehaviour:
   m_MinSize: {x: 400, y: 112}
   m_MaxSize: {x: 32384, y: 16192}
   vertical: 0
-  controlID: 21
+  controlID: 75
   draggingID: 0
 --- !u!114 &6
 MonoBehaviour:
@@ -279,7 +279,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 112}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 1
-  controlID: 22
+  controlID: 76
   draggingID: 0
 --- !u!114 &12
 MonoBehaviour:
@@ -306,7 +306,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 56}
   m_MaxSize: {x: 24288, y: 8096}
   vertical: 0
-  controlID: 23
+  controlID: 77
   draggingID: 0
 --- !u!114 &13
 MonoBehaviour:
@@ -329,8 +329,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "Game\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 206
-    y: 24
+    x: 205
+    y: 79
     width: 729
     height: 596
   m_SerializedDataModeController:
@@ -432,9 +432,9 @@ MonoBehaviour:
     m_TextWithWhitespace: "Animator\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 205
-    y: 79
-    width: 1309
+    x: 206
+    y: 24
+    width: 729
     height: 596
   m_SerializedDataModeController:
     m_DataMode: 0
@@ -460,14 +460,14 @@ MonoBehaviour:
     - {fileID: -146770231246597786, guid: ad010642ea893d34fbe2da0bd25899b8, type: 2}
     - {fileID: 8935139105511635633, guid: 48295c6b7986aec4ebff8dc5c4f46ba6, type: 3}
     m_ValueSerializationHelper:
-    - e00: 0.55360824
+    - e00: 0.11061503
       e01: 0
       e02: 0
-      e03: -1.6082458
+      e03: 300.9596
       e10: 0
-      e11: 0.55360824
+      e11: 0.11061503
       e12: 0
-      e13: 195.45877
+      e13: 388.24713
       e20: 0
       e21: 0
       e22: 1
@@ -492,14 +492,14 @@ MonoBehaviour:
       e31: 0
       e32: 0
       e33: 1
-    - e00: 0.50772834
+    - e00: 0.1
       e01: 0
       e02: 0
-      e03: 192.41495
+      e03: 170.94345
       e10: 0
-      e11: 0.50772834
+      e11: 0.1
       e12: 0
-      e13: 216.78146
+      e13: 272.17926
       e20: 0
       e21: 0
       e22: 1
@@ -508,14 +508,14 @@ MonoBehaviour:
       e31: 0
       e32: 0
       e33: 1
-    - e00: 0.80274904
+    - e00: 0.1
       e01: 0
       e02: 0
-      e03: 77.32309
+      e03: 129.91675
       e10: 0
-      e11: 0.80274904
+      e11: 0.1
       e12: 0
-      e13: 164.83719
+      e13: 359.246
       e20: 0
       e21: 0
       e22: 1
@@ -540,14 +540,14 @@ MonoBehaviour:
       e31: 0
       e32: 0
       e33: 1
-    - e00: 0.55360824
+    - e00: 0.5618557
       e01: 0
       e02: 0
-      e03: -1.6082458
+      e03: -1.8556824
       e10: 0
-      e11: 0.55360824
+      e11: 0.5618557
       e12: 0
-      e13: 200.99484
+      e13: 199.84021
       e20: 0
       e21: 0
       e22: 1
@@ -556,14 +556,14 @@ MonoBehaviour:
       e31: 0
       e32: 0
       e33: 1
-    - e00: 0.4512605
+    - e00: 0.21027777
       e01: 0
       e02: 0
-      e03: 100.7395
+      e03: 164.24088
       e10: 0
-      e11: 0.4512605
+      e11: 0.21027777
       e12: 0
-      e13: 217.57983
+      e13: 224.59633
       e20: 0
       e21: 0
       e22: 1
@@ -589,9 +589,9 @@ MonoBehaviour:
       e32: 0
       e33: 1
   m_PreviewAnimator: {fileID: 0}
-  m_AnimatorController: {fileID: 9100000, guid: dc03b6360b6b2d64a8afe909edc865c9, type: 2}
+  m_AnimatorController: {fileID: 9100000, guid: d55635d82475b4e49a99d17885aa9bce, type: 2}
   m_BreadCrumbs:
-  - m_Target: {fileID: 428204014158524659, guid: dc03b6360b6b2d64a8afe909edc865c9, type: 2}
+  - m_Target: {fileID: -5983317038761014330, guid: d55635d82475b4e49a99d17885aa9bce, type: 2}
     m_ScrollPosition: {x: 0, y: 0}
   stateMachineGraph: {fileID: 0}
   stateMachineGraphGUI: {fileID: 0}
@@ -1054,7 +1054,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Audios/Player SFX
+    - Assets/Animations/Boss
     m_Globs: []
     m_ProductIds: 
     m_AnyWithAssetOrigin: 0
@@ -1064,27 +1064,27 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/Audios/Player SFX
+  - Assets/Animations/Boss
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Users\Vieira\Unity Learning\GAME JAM 26\TG\GG26
   m_LockTracker:
     m_IsLocked: 0
   m_LastLocalAssetsSearchArea: 1
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 31}
+    scrollPos: {x: 0, y: 39}
     m_SelectedIDs:
-    - m_Data: 52258
+    - m_Data: 52202
     m_LastClickedID:
-      m_Data: 52258
+      m_Data: 52202
     m_ExpandedIDs:
     - m_Data: 0
-    - m_Data: 51864
-    - m_Data: 51866
-    - m_Data: 51868
-    - m_Data: 51870
-    - m_Data: 51872
-    - m_Data: 51874
-    - m_Data: 51876
+    - m_Data: 51902
+    - m_Data: 51904
+    - m_Data: 51906
+    - m_Data: 51908
+    - m_Data: 51910
+    - m_Data: 51912
+    - m_Data: 51914
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1117,13 +1117,13 @@ MonoBehaviour:
       m_Data: 0
     m_ExpandedIDs:
     - m_Data: 0
-    - m_Data: 51864
-    - m_Data: 51866
-    - m_Data: 51868
-    - m_Data: 51870
-    - m_Data: 51872
-    - m_Data: 51874
-    - m_Data: 51876
+    - m_Data: 51902
+    - m_Data: 51904
+    - m_Data: 51906
+    - m_Data: 51908
+    - m_Data: 51910
+    - m_Data: 51912
+    - m_Data: 51914
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1151,8 +1151,8 @@ MonoBehaviour:
       m_ResourceFile: 
   m_ListAreaState:
     m_SelectedInstanceIDs:
-    - m_Data: 50934
-    m_LastClickedInstanceID: 50934
+    - m_Data: 48808
+    m_LastClickedInstanceID: 48808
     m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs:
     - m_Data: 51328
@@ -1318,6 +1318,7 @@ MonoBehaviour:
       - m_Data: 50508
       - m_Data: 50762
       - m_Data: 50788
+      - m_Data: 50792
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -1840,9 +1841,9 @@ MonoBehaviour:
   m_AudioPlay: 0
   m_DebugDrawModesUseInteractiveLightBakingData: 0
   m_Position:
-    m_Target: {x: -1.2096535, y: 36.84718, z: -1.127648}
+    m_Target: {x: 0.4210328, y: 74.1657, z: -1.0977932}
     speed: 2
-    m_Value: {x: -1.2096535, y: 36.84718, z: -1.127648}
+    m_Value: {x: 0.4210328, y: 74.1657, z: -1.0977932}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1892,9 +1893,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 14.017265
+    m_Target: 10.645328
     speed: 2
-    m_Value: 14.017265
+    m_Value: 10.645328
   m_Ortho:
     m_Target: 1
     speed: 2

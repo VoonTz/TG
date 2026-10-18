@@ -1,3 +1,4 @@
+
 using UnityEngine;
 using System.Collections;
 
@@ -27,29 +28,59 @@ public class Boss : MonoBehaviour
     [SerializeField] private float spikeDelay = 0.5f;
     [SerializeField] private int spikeCount = 3;
 
+    [Header("SFX")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip normalShotSFX;
+    [SerializeField] private AudioClip shotgunSFX;
+    [SerializeField] private AudioClip spikeSFX;
+    [SerializeField] private AudioClip damageSFX;
+    [SerializeField] private AudioClip deathSFX;
+
+    [Header("SFX Volume")]
+    [Range(0f, 1f)]
+    [SerializeField] private float normalShotVolume = 0.7f;
+    [Range(0f, 1f)]
+    [SerializeField] private float shotgunVolume = 0.8f;
+    [Range(0f, 1f)]
+    [SerializeField] private float spikeVolume = 0.8f;
+    [Range(0f, 1f)]
+    [SerializeField] private float damageVolume = 1f;
+    [Range(0f, 1f)]
+    [SerializeField] private float deathVolume = 1f;
+
     private int currentHealth;
     private Transform player;
 
     private float nextNormalShot;
     private float nextShotgunShot;
 
-    Animator Tree;
+    private Animator Tree;
 
     private bool isDead = false;
-
     private bool isSpiking = false;
-
     private bool hasAggro = false;
 
     private void Start()
     {
         Tree = GetComponent<Animator>();
 
+        // Procura o AudioSource automaticamente, caso não seja atribuído.
+        if (audioSource == null)
+            audioSource = GetComponent<AudioSource>();
+
         currentHealth = maxHealth;
 
         GameObject p = GameObject.FindGameObjectWithTag("Player");
+
         if (p != null)
             player = p.transform;
+    }
+
+    // Reproduz um SFX sem interromper outros efeitos.
+    private void PlaySFX(AudioClip clip, float volume = 1f)
+    {
+        if (audioSource != null && clip != null)
+            audioSource.PlayOneShot(clip, volume);
     }
 
     private void Update()
@@ -57,31 +88,28 @@ public class Boss : MonoBehaviour
         if (isDead) return;
         if (player == null) return;
 
-        float distance = Vector2.Distance(transform.position, player.position);
+        float distance = Vector2.Distance(
+            transform.position, player.position);
 
-        // Ativa aggro uma vez
         if (!hasAggro && distance <= aggroRange)
-        {
             hasAggro = true;
-        }
 
-        // Se nunca entrou no aggro, não faz nada
         if (!hasAggro) return;
 
         float hpPercent = (float)currentHealth / maxHealth;
 
-        // ===== FASE 1 =====
+        // FASE 1
         if (hpPercent > 0.5f)
         {
             NormalShoot();
         }
-        // ===== FASE 2 =====
+        // FASE 2
         else if (hpPercent > 0.25f)
         {
             NormalShoot();
             ShotgunAttack();
         }
-        // ===== FASE 3 =====
+        // FASE 3
         else
         {
             ShotgunAttack();
@@ -98,16 +126,23 @@ public class Boss : MonoBehaviour
 
         nextNormalShot = Time.time + (1f / normalFireRate);
 
-        GameObject bullet = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
+        GameObject bullet = Instantiate(
+            projectilePrefab,
+            firePoint.position,
+            Quaternion.identity);
 
-        Vector2 direction = (player.position - firePoint.position).normalized;
+        Vector2 direction =
+            (player.position - firePoint.position).normalized;
 
         Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
+
         if (rb != null)
             rb.linearVelocity = direction * projectileSpeed;
 
         BossProjectile proj = bullet.AddComponent<BossProjectile>();
         proj.damage = projectileDamage;
+
+        PlaySFX(normalShotSFX, normalShotVolume);
     }
 
     // ===== SHOTGUN =====
@@ -117,29 +152,44 @@ public class Boss : MonoBehaviour
 
         nextShotgunShot = Time.time + shotgunCooldown;
 
-        Vector2 baseDir = (player.position - firePoint.position).normalized;
-        float baseAngle = Mathf.Atan2(baseDir.y, baseDir.x) * Mathf.Rad2Deg;
+        Vector2 baseDir =
+            (player.position - firePoint.position).normalized;
+
+        float baseAngle =
+            Mathf.Atan2(baseDir.y, baseDir.x) * Mathf.Rad2Deg;
 
         int gapIndex = Random.Range(0, shotgunBullets);
+
+        bool fired = false;
 
         for (int i = 0; i < shotgunBullets; i++)
         {
             if (i == gapIndex) continue;
 
-            float angle = baseAngle - shotgunSpread / 2 + (shotgunSpread / shotgunBullets) * i;
+            float angle = baseAngle - shotgunSpread / 2f
+                + (shotgunSpread / shotgunBullets) * i;
 
             Quaternion rot = Quaternion.Euler(0, 0, angle);
 
-            GameObject bullet = Instantiate(projectilePrefab, firePoint.position, rot);
+            GameObject bullet = Instantiate(
+                projectilePrefab,
+                firePoint.position,
+                rot);
 
             Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
 
             if (rb != null)
-                rb.linearVelocity = (Vector2)(rot * Vector2.right) * projectileSpeed;
+                rb.linearVelocity =
+                    (Vector2)(rot * Vector2.right) * projectileSpeed;
 
             BossProjectile proj = bullet.AddComponent<BossProjectile>();
             proj.damage = projectileDamage;
+
+            fired = true;
         }
+
+        if (fired)
+            PlaySFX(shotgunSFX, shotgunVolume);
     }
 
     // ===== ESPINHOS =====
@@ -149,12 +199,17 @@ public class Boss : MonoBehaviour
 
         for (int i = 0; i < spikeCount; i++)
         {
+            if (isDead || player == null) break;
+
             Vector3 spawnPos = player.position;
 
-            GameObject spike = Instantiate(spikePrefab, spawnPos, Quaternion.identity);
+            GameObject spike = Instantiate(
+                spikePrefab, spawnPos, Quaternion.identity);
 
             Spike spikeScript = spike.AddComponent<Spike>();
             spikeScript.damage = projectileDamage;
+
+            PlaySFX(spikeSFX, spikeVolume);
 
             yield return new WaitForSeconds(spikeDelay);
         }
@@ -167,7 +222,7 @@ public class Boss : MonoBehaviour
     // ===== VIDA =====
     public void TakeDamage(int damage)
     {
-        
+        if (isDead) return;
         if (!CompareTag("Enemy")) return;
 
         hasAggro = true;
@@ -178,16 +233,30 @@ public class Boss : MonoBehaviour
         {
             Die();
         }
+        else
+        {
+            PlaySFX(damageSFX, damageVolume);
+        }
     }
 
+    // ===== MORTE =====
     private void Die()
     {
         if (isDead) return;
+
         isDead = true;
-        Tree.SetTrigger("IsDead");
+
+        PlaySFX(deathSFX, deathVolume);
+
+        if (Tree != null)
+            Tree.SetTrigger("IsDead");
+
         Player.RegisterEnemyKill();
+
         gameObject.tag = "Untagged";
-        //Destroy(gameObject, 1.5f);
+
+        // Mantido comentado para preservar sua animação de morte.
+        // Destroy(gameObject, 1.5f);
     }
 
     private void OnDrawGizmosSelected()
@@ -198,10 +267,8 @@ public class Boss : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);
     }
-
-    
-
 }
+
 // ===== PROJÉTIL =====
 public class BossProjectile : MonoBehaviour
 {
@@ -223,13 +290,13 @@ public class BossProjectile : MonoBehaviour
 
             Destroy(gameObject);
         }
+
         if (collision.CompareTag("Wall"))
         {
             Destroy(gameObject);
         }
     }
 }
-
 
 // ===== ESPINHO =====
 public class Spike : MonoBehaviour
@@ -243,7 +310,8 @@ public class Spike : MonoBehaviour
 
         if (timer <= 0f)
         {
-            Collider2D hit = Physics2D.OverlapCircle(transform.position, 1f);
+            Collider2D hit =
+                Physics2D.OverlapCircle(transform.position, 1f);
 
             if (hit != null && hit.CompareTag("Player"))
             {
