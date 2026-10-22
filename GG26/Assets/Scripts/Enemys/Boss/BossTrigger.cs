@@ -1,16 +1,39 @@
+
 using UnityEngine;
 
 public class BossTrigger : MonoBehaviour
 {
-    public Animator bossAnimator; // arrasta o boss aqui no inspector
+    [Header("Boss")]
+    public Animator bossAnimator;
 
-    void OnTriggerEnter2D(Collider2D other)
+    [Header("Audio")]
+    public AudioManager audioManager;
+
+    private bool triggered = false;
+
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (triggered || !other.CompareTag("Player"))
+            return;
+
+        triggered = true;
+
+        Debug.Log("Trigger do Boss ativado!");
+
+        // Inicia a animação de entrada.
+        if (bossAnimator != null)
         {
-           Debug.Log("Trigger ativado");
-           bossAnimator.SetTrigger("Entrar");
+            bossAnimator.SetTrigger("Entrar");
         }
-        
+
+        // Faz a transição das músicas.
+        if (audioManager != null)
+        {
+            audioManager.PlayBossMusic();
+        }
+        else
+        {
+            Debug.LogWarning("AudioManager não foi configurado no BossTrigger!");
+        }
     }
 }
