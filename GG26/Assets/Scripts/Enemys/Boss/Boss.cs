@@ -253,7 +253,7 @@ public class Boss : MonoBehaviour
 
         Player.RegisterEnemyKill();
 
-        gameObject.tag = "Untagged";
+        gameObject.tag = "BossDead";
 
         // Mantido comentado para preservar sua animação de morte.
         // Destroy(gameObject, 1.5f);
