@@ -167,7 +167,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.2359254, y: 0.3147977}
+  m_Size: {x: 0.15, y: 0.22}
   m_EdgeRadius: 0
 --- !u!95 &5190281100372453482
 Animator:
@@ -206,14 +206,15 @@ MonoBehaviour:
   maxHealth: 10
   chaseSpeed: 1.5
   aggroRange: 6
+  loseAggroRange: 8
   closeReactionDelay: 0.25
   wanderSpeed: 1
   wanderChangeTime: 1
   wanderIdleChance: 0.2
-  shootingRange: 8.15
-  minimumDistance: 4.58
+  shootingRange: 8.3
+  minimumDistance: 3.79
   shootWindupTime: 0.3
-  shootCooldown: 1.5
+  shootCooldown: 2
   projectilePrefab: {fileID: 5441221335093374210, guid: 2cf74cfdb09edd94a92f98eca7f8d1b6, type: 3}
   firePoint: {fileID: 6244046965799578213}
   projectileSpeed: 5
@@ -229,9 +230,9 @@ MonoBehaviour:
   paramIsDead: isDead
   deathAnimTime: 0.5
   audioSource: {fileID: 0}
-  shootSFX: {fileID: 0}
+  shootSFX: {fileID: 8300000, guid: 6a608eddb764e70429fd4151aa0fae2d, type: 3}
   deathSFX: {fileID: 0}
-  hurtSFX: {fileID: 0}
+  hurtSFX: {fileID: 8300000, guid: 3e20fa12a6f9ed64dae1aa7ddb4537bc, type: 3}
   sfxVolume: 1
 --- !u!1 &6421459156778032153
 GameObject:
@@ -258,7 +259,7 @@ Transform:
   m_GameObject: {fileID: 6421459156778032153}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.009, y: -0.021, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

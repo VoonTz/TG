@@ -212,15 +212,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee32ccb795f686044a8992a333e74431, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tuga
-  maxHealth: 15
+  maxHealth: 10
   chaseSpeed: 1.5
   aggroRange: 8
   dashRange: 4
-  dashSpeed: 9
+  dashSpeed: 8
   dashDuration: 0.5
   dashCooldown: 2
   dashPrepareTime: 0.5
-  dashDamage: 4
+  dashDamage: 3
   damageRange: 0.8
   obstacleMask:
     serializedVersion: 2
@@ -234,9 +234,9 @@ MonoBehaviour:
   movementAudioSource: {fileID: 0}
   sfxAudioSource: {fileID: 0}
   movementSFX: {fileID: 0}
-  prepareDashSFX: {fileID: 0}
+  prepareDashSFX: {fileID: 8300000, guid: ac0672aba2204ea47898d8d1aead1982, type: 3}
   dashSFX: {fileID: 0}
-  hitSFX: {fileID: 0}
+  hitSFX: {fileID: 8300000, guid: 3e20fa12a6f9ed64dae1aa7ddb4537bc, type: 3}
   deathSFX: {fileID: 0}
   movementVolume: 1
-  sfxVolume: 1
+  sfxVolume: 0.75

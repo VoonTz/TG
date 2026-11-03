@@ -431,7 +431,7 @@ public class Frok : MonoBehaviour
         anim.SetBool(paramIsDead, dead);
     }
 
-    private void OnGUI()
+   /* private void OnGUI()
     {
         if (!debugInfo) return;
         if (mainCam == null) mainCam = Camera.main;
@@ -458,5 +458,5 @@ public class Frok : MonoBehaviour
 
         Gizmos.color = Color.magenta;
         Gizmos.DrawWireSphere(transform.position, attackDamageRange);
-    }
+    }*/
 }
