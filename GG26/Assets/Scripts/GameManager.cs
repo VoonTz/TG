@@ -46,7 +46,18 @@ public class GameManager : MonoBehaviour
 
     public void UpdateUI()
     {
-        healthImage.sprite = healthSprites[currentHealth];
+        if (healthImage == null || healthSprites == null)
+            return;
+
+        int health = Mathf.Clamp(currentHealth, 0, maxHealth);
+
+        // Calcula quanto de vida foi perdido
+        int damage = maxHealth - health;
+
+        // Atualiza o sprite correspondente
+        int spriteIndex = Mathf.Clamp(damage, 0, healthSprites.Length - 1);
+
+        healthImage.sprite = healthSprites[spriteIndex];
     }
 
     public void ReduceLives()
