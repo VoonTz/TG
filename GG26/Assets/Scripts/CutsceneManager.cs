@@ -1,5 +1,7 @@
+
 using UnityEngine;
 using UnityEngine.SceneManagement;
+
 public class CutsceneManager : MonoBehaviour
 {
     [Header("Cutscene")]
@@ -26,31 +28,36 @@ public class CutsceneManager : MonoBehaviour
 
         Debug.Log("Cutscene iniciada!");
 
+        // Configura o Animator para funcionar sem depender do Time.timeScale
+        cutsceneAnimator.updateMode = AnimatorUpdateMode.UnscaledTime;
+        cutsceneAnimator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+        cutsceneAnimator.speed = 1f;
+
+        // Pausa o jogo
         Time.timeScale = 0f;
 
+        // Ativa a cutscene
         cutsceneCanvas.SetActive(true);
 
         buttonMenu.SetActive(false);
 
-        cutsceneAnimator.updateMode = AnimatorUpdateMode.UnscaledTime;
-
+        // Reinicia e reproduz a animação
+        cutsceneAnimator.Rebind();
         cutsceneAnimator.Play("Cutscene", 0, 0f);
+        cutsceneAnimator.Update(0f);
     }
 
     public void CutsceneFinished()
     {
         Debug.Log("Cutscene finalizada!");
 
-        // Exibe o botão de retorno
         buttonMenu.SetActive(true);
     }
 
     public void ReturnToMenu()
     {
-        // Retoma o tempo normal antes de trocar de cena
         Time.timeScale = 1f;
 
-        // Carrega o menu principal
         SceneManager.LoadScene("Main Menu");
     }
 }
