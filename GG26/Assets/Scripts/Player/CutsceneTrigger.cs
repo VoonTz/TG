@@ -1,16 +1,26 @@
+
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CutsceneTrigger : MonoBehaviour
 {
-    [SerializeField] private CutsceneManager cutsceneManager;
+    [SerializeField] private string cutsceneSceneName = "CutsceneScene";
+
+    private bool cutsceneStarted = false;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("BossDead"))
+        if (other.CompareTag("BossDead") && !cutsceneStarted)
         {
-            Debug.Log("Jogador tocou no chefão derrotado!");
+            cutsceneStarted = true;
 
-            cutsceneManager.PlayCutscene();
+            Debug.Log("Boss derrotado! Carregando cutscene...");
+
+            // Garante que o tempo esteja normal
+            Time.timeScale = 1f;
+
+            // Carrega a cena da cutscene
+            SceneManager.LoadScene(cutsceneSceneName);
         }
     }
 }

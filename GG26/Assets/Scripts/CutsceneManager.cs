@@ -1,56 +1,68 @@
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.Playables;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
+
 public class CutsceneManager : MonoBehaviour
 {
-    [Header("Cutscene")]
-    [SerializeField] private GameObject cutsceneCanvas;
-    [SerializeField] private Animator cutsceneAnimator;
+    [Header("Cutscene (opcional, se usar Timeline)")]
+    [SerializeField] private PlayableDirector director;
 
-    [Header("Botão")]
-    [SerializeField] private GameObject buttonMenu;
+    [Header("Botão de saída")]
+    [SerializeField] private Button exitButton;
 
-    private bool cutsceneStarted = false;
+    [Header("Cena de destino")]
+    [SerializeField] private string menuSceneName = "Main Menu";
 
-    void Start()
+    private void Awake()
     {
-        buttonMenu.SetActive(false);
-        cutsceneCanvas.SetActive(false);
+        Time.timeScale = 1f;
+
+        // Garante que existe um EventSystem na cena
+        if (FindFirstObjectByType<EventSystem>() == null)
+        {
+            Debug.LogWarning("Nenhum EventSystem na cena! Criando um.");
+            new GameObject("EventSystem",
+                typeof(EventSystem),
+                typeof(StandaloneInputModule));
+        }
+
+        exitButton.gameObject.SetActive(false);
+        exitButton.onClick.RemoveAllListeners();
+        exitButton.onClick.AddListener(ReturnToMenu);
     }
 
-    public void PlayCutscene()
+    private void OnEnable()
     {
-        if (cutsceneStarted)
-            return;
-
-        cutsceneStarted = true;
-
-        Debug.Log("Cutscene iniciada!");
-
-        Time.timeScale = 0f;
-
-        cutsceneCanvas.SetActive(true);
-
-        buttonMenu.SetActive(false);
-
-        cutsceneAnimator.updateMode = AnimatorUpdateMode.UnscaledTime;
-
-        cutsceneAnimator.Play("Cutscene", 0, 0f);
+        if (director != null)
+            director.stopped += OnDirectorStopped;
     }
 
+    private void OnDisable()
+    {
+        if (director != null)
+            director.stopped -= OnDirectorStopped;
+    }
+
+    private void OnDirectorStopped(PlayableDirector d)
+    {
+        CutsceneFinished();
+    }
+
+    // Pode ser chamado por Animation Event ou Signal do Timeline
     public void CutsceneFinished()
     {
         Debug.Log("Cutscene finalizada!");
-
-        // Exibe o botão de retorno
-        buttonMenu.SetActive(true);
+        Time.timeScale = 1f;
+        exitButton.gameObject.SetActive(true);
+        exitButton.interactable = true;
     }
 
     public void ReturnToMenu()
     {
-        // Retoma o tempo normal antes de trocar de cena
+        Debug.Log("Botão Exit pressionado!");
         Time.timeScale = 1f;
-
-        // Carrega o menu principal
-        SceneManager.LoadScene("Main Menu");
+        SceneManager.LoadScene(menuSceneName);
     }
 }
