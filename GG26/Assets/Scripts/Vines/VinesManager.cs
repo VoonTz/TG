@@ -23,6 +23,7 @@ public class VinesManager : MonoBehaviour
 
     [Header("Tilemap das vinhas")]
     [SerializeField] private GameObject vinesTilemap;
+    [SerializeField] private GameObject Gate;
 
     private int collectedItems = 0;
     private bool vinesDestroyed = false;
