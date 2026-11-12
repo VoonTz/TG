@@ -1,6 +1,7 @@
 
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class Miro : MonoBehaviour
@@ -13,6 +14,10 @@ public class Miro : MonoBehaviour
         ATTACK,
         DEAD
     }
+
+    [Header("Health HUD")]
+    [SerializeField] private GameObject healthBarRoot;
+    [SerializeField] private Image healthBarFill;
 
     [Header("Stats")]
     [SerializeField] private int maxHealth = 15;
@@ -107,6 +112,11 @@ public class Miro : MonoBehaviour
 
         currentHealth = maxHealth;
 
+        if (healthBarRoot != null)
+            healthBarRoot.SetActive(false);
+
+        UpdateHealthUI();
+
         PickNewWanderDirection();
 
         castFilter = new ContactFilter2D();
@@ -199,6 +209,8 @@ public class Miro : MonoBehaviour
             aggroed = true;
             wanderDir = Vector2.zero;
             wanderTimer = 0f;
+
+            ShowHealthBar();
         }
 
         // ========================================================
@@ -238,6 +250,23 @@ public class Miro : MonoBehaviour
                 state = State.CHASE;
             }
         }
+    }
+
+    private void UpdateHealthUI()
+    {
+        if (healthBarFill == null)
+            return;
+
+        healthBarFill.fillAmount =
+            (float)currentHealth / maxHealth;
+    }
+
+    private void ShowHealthBar()
+    {
+        if (healthBarRoot != null)
+            healthBarRoot.SetActive(true);
+
+        UpdateHealthUI();
     }
 
     private void FixedUpdate()
@@ -584,10 +613,11 @@ public class Miro : MonoBehaviour
 
     public void TakeDamage(int amount)
     {
-        if (isDead)
+        if (isDead || amount <= 0)
             return;
 
         currentHealth -= amount;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
         // Receber dano deixa o Miro agressivo.
         if (!aggroed)
@@ -597,6 +627,8 @@ public class Miro : MonoBehaviour
             wanderDir = Vector2.zero;
             wanderTimer = 0f;
         }
+
+        ShowHealthBar();
 
         PlaySFX(hurtSFX);
 
@@ -614,6 +646,9 @@ public class Miro : MonoBehaviour
             return;
 
         isDead = true;
+
+        if (healthBarRoot != null)
+            healthBarRoot.SetActive(false);
 
         if (anim != null)
             anim.SetTrigger("IsDead");

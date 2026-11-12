@@ -1,9 +1,14 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class Frok : MonoBehaviour
 {
     public enum State { IDLE, WANDER, CHASE, ATTACK, DEAD }
+
+    [Header("Health HUD")]
+    [SerializeField] private GameObject healthBarRoot;
+    [SerializeField] private Image healthBarFill;
 
     [Header("Stats")]
     [SerializeField] private int maxHealth = 15;
@@ -93,6 +98,10 @@ public class Frok : MonoBehaviour
         if (anim == null) anim = GetComponent<Animator>();
 
         currentHealth = maxHealth;
+        if (healthBarRoot != null)
+            healthBarRoot.SetActive(false);
+
+        UpdateHealthUI();
         PickNewWanderDirection();
 
         castFilter = new ContactFilter2D();
@@ -119,7 +128,12 @@ public class Frok : MonoBehaviour
         if (!aggroed)
         {
             float dist = Vector2.Distance(transform.position, player.position);
-            if (dist <= aggroRange) aggroed = true;
+
+            if (dist <= aggroRange)
+            {
+                aggroed = true;
+                ShowHealthBar();
+            }
         }
 
         // pós-ataque idle trava tudo
@@ -151,6 +165,25 @@ public class Frok : MonoBehaviour
             float dist = Vector2.Distance(transform.position, player.position);
             state = (dist <= attackRange) ? State.ATTACK : State.CHASE;
         }
+    }
+    //UI STATUS
+
+    private void UpdateHealthUI()
+    {
+        if (healthBarFill == null)
+            return;
+
+        float healthPercent = (float)currentHealth / maxHealth;
+
+        healthBarFill.fillAmount = Mathf.Clamp01(healthPercent);
+    }
+
+    private void ShowHealthBar()
+    {
+        if (healthBarRoot != null)
+            healthBarRoot.SetActive(true);
+
+        UpdateHealthUI();
     }
 
     public void ResetEnemyState()
@@ -363,10 +396,12 @@ public class Frok : MonoBehaviour
     public void TakeDamage(int amount)
     {
         if (isDead) return;
+        if (amount <= 0) return;
 
         currentHealth -= amount;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
-        // tomou tiro = aggro instantâneo
+        // Tomou tiro = aggro instantâneo
         if (!aggroed)
         {
             aggroed = true;
@@ -374,10 +409,12 @@ public class Frok : MonoBehaviour
             wanderTimer = 0f;
         }
 
+        // Atualiza a barra e garante que ela apareça.
+        ShowHealthBar();
+
         if (currentHealth > 0)
             PlaySFX(damageClip);
-        // se estava vagando/parado, força chase a partir de agora
-        // (se estiver atacando, ele termina o ciclo e depois volta pra chase naturalmente)
+
         if (currentHealth <= 0)
             Die();
     }
@@ -387,6 +424,9 @@ public class Frok : MonoBehaviour
         if (isDead) return;
 
         isDead = true;
+
+        if (healthBarRoot != null)
+            healthBarRoot.SetActive(false);
 
         if (footstepSource != null)
             footstepSource.Stop();

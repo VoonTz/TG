@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class DashEnemy : MonoBehaviour
@@ -13,6 +14,10 @@ public class DashEnemy : MonoBehaviour
         COOLDOWN,
         DEAD
     }
+
+    [Header("Health HUD")]
+    [SerializeField] private GameObject healthBarRoot;
+    [SerializeField] private Image healthBarFill;
 
     [Header("Stats")]
     [SerializeField] private int maxHealth = 15;
@@ -87,6 +92,11 @@ public class DashEnemy : MonoBehaviour
             anim = GetComponent<Animator>();
 
         currentHealth = maxHealth;
+
+        if (healthBarRoot != null)
+            healthBarRoot.SetActive(false);
+
+        UpdateHealthUI();
 
         castFilter = new ContactFilter2D();
         castFilter.useTriggers = false;
@@ -182,8 +192,30 @@ public class DashEnemy : MonoBehaviour
             {
                 aggroed = true;
                 state = State.CHASE;
+
+                ShowHealthBar();
             }
         }
+    }
+
+    //UI STATUS
+
+    private void UpdateHealthUI()
+    {
+        if (healthBarFill == null)
+            return;
+
+        float healthPercent = (float)currentHealth / maxHealth;
+
+        healthBarFill.fillAmount = Mathf.Clamp01(healthPercent);
+    }
+
+    private void ShowHealthBar()
+    {
+        if (healthBarRoot != null)
+            healthBarRoot.SetActive(true);
+
+        UpdateHealthUI();
     }
 
     private void FixedUpdate()
@@ -546,10 +578,17 @@ public class DashEnemy : MonoBehaviour
         if (isDead)
             return;
 
-        currentHealth -= amount;
+        if (amount <= 0)
+            return;
 
-        // Se tomar dano, fica agressivo
+        currentHealth -= amount;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+
+        // Se tomar dano, fica agressivo.
         aggroed = true;
+
+        // Mostra e atualiza a barra.
+        ShowHealthBar();
 
         if (currentHealth <= 0)
         {
@@ -567,6 +606,9 @@ public class DashEnemy : MonoBehaviour
             return;
 
         isDead = true;
+
+        if (healthBarRoot != null)
+            healthBarRoot.SetActive(false);
 
         anim.SetTrigger("IsDead");
 

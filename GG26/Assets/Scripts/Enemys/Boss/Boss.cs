@@ -1,9 +1,14 @@
 
 using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class Boss : MonoBehaviour
 {
+    [Header("Boss HUD")]
+    [SerializeField] private GameObject bossHealthRoot;
+    [SerializeField] private Image bossHealthFill;
+
     [Header("Boss Settings")]
     [SerializeField] private int maxHealth = 100;
     [SerializeField] private Transform firePoint;
@@ -70,6 +75,11 @@ public class Boss : MonoBehaviour
 
         currentHealth = maxHealth;
 
+        if (bossHealthRoot != null)
+            bossHealthRoot.SetActive(false);
+
+        UpdateBossHealthUI();
+
         GameObject p = GameObject.FindGameObjectWithTag("Player");
 
         if (p != null)
@@ -92,7 +102,10 @@ public class Boss : MonoBehaviour
             transform.position, player.position);
 
         if (!hasAggro && distance <= aggroRange)
+        {
             hasAggro = true;
+            ShowBossHealthBar();
+        }
 
         if (!hasAggro) return;
 
@@ -118,6 +131,25 @@ public class Boss : MonoBehaviour
                 StartCoroutine(SpikeAttack());
         }
     }
+
+    private void UpdateBossHealthUI()
+    {
+        if (bossHealthFill == null)
+            return;
+
+        float healthPercent = (float)currentHealth / maxHealth;
+
+        bossHealthFill.fillAmount = Mathf.Clamp01(healthPercent);
+    }
+
+    private void ShowBossHealthBar()
+    {
+        if (bossHealthRoot != null)
+            bossHealthRoot.SetActive(true);
+
+        UpdateBossHealthUI();
+    }
+
 
     // ===== TIRO NORMAL =====
     private void NormalShoot()
@@ -227,7 +259,12 @@ public class Boss : MonoBehaviour
 
         hasAggro = true;
 
+        ShowBossHealthBar();
+
         currentHealth -= damage;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+
+        UpdateBossHealthUI();
 
         if (currentHealth <= 0)
         {

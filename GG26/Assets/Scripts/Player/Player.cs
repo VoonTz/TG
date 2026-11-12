@@ -1,10 +1,19 @@
 
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class Player : MonoBehaviour
 {
+    [Header("Heal HUD")]
+    [SerializeField] private Image healChargeIcon;
+
+    [SerializeField] private Sprite[] healProgressSprites;
+
+    [Header("Stamina HUD")]
+    [SerializeField] private Image staminaBarFill;
+
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 5f;
 
@@ -111,6 +120,8 @@ public class Player : MonoBehaviour
     private void Start()
     {
         currentStamina = maxStamina;
+        UpdateStaminaUI();
+        UpdateHealChargeUI();
         isExhausted = false;
         cooldownTimer = 0f;
 
@@ -154,11 +165,48 @@ public class Player : MonoBehaviour
         moveInput = moveInput.normalized;
 
         HandleSprint();
+        UpdateStaminaUI();
         HandleFootsteps();
         RotateHandToMouse();
         HandleShoot();
         UpdateAnimations();
         HandleHealInput();
+    }
+    private void UpdateStaminaUI()
+    {
+        if (staminaBarFill == null)
+            return;
+
+        staminaBarFill.fillAmount = currentStamina / maxStamina;
+    }
+
+    private void UpdateHealChargeUI()
+    {
+        if (healChargeIcon == null || healProgressSprites.Length == 0)
+            return;
+
+        // Se possui uma carga de cura, mostra o último Sprite.
+        if (GameManager.Instance.healCharges > 0)
+        {
+            healChargeIcon.sprite = healProgressSprites[
+                healProgressSprites.Length - 1
+            ];
+
+            return;
+        }
+
+        // Calcula o progresso dos inimigos eliminados.
+        float progress = (float)GameManager.Instance.killsSinceRestore /
+                         killsToRestoreHeal;
+
+        progress = Mathf.Clamp01(progress);
+
+        // Converte o progresso para o índice do Sprite.
+        int spriteIndex = Mathf.RoundToInt(
+            progress * (healProgressSprites.Length - 1)
+        );
+
+        healChargeIcon.sprite = healProgressSprites[spriteIndex];
     }
 
     private void FixedUpdate()
@@ -357,6 +405,7 @@ public class Player : MonoBehaviour
         if (GameManager.Instance.currentHealth > before)
         {
             GameManager.Instance.healCharges = 0;
+            UpdateHealChargeUI();
 
             // Som de cura somente se recuperou vida
             PlaySFX(healSFX);
@@ -451,6 +500,9 @@ public class Player : MonoBehaviour
             GameManager.Instance.killsSinceRestore = 0;
             GameManager.Instance.healCharges = 1;
         }
+
+        // Atualiza o Sprite a cada inimigo eliminado.
+        instance.UpdateHealChargeUI();
     }
 
     // ====== SISTEMA CENTRAL DE SFX ======
